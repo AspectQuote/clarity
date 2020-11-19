@@ -118,6 +118,32 @@
   transform: translateY(4px);
 }
 
+.yellowbutton {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #E4CC37;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #6C5F0F;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+.yellowbutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #6C5F0F;
+}
+.yellowbutton:active {
+  box-shadow: 0px 1px 0px #6C5F0F;
+  transform: translateY(4px);
+}
+
 @keyframes wavy {
   0%, 100% {
     transform: translateY(4px);
