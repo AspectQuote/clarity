@@ -1,0 +1,136 @@
+@font-face {
+  font-family: regular;
+  src: url(NotoSans-Regular.ttf);
+}
+@font-face {
+  font-family: bregular;
+  src: url(NotoSans-Bold.ttf);
+}
+
+* {
+  font-family: regular;
+  font-size: 15px;
+  color: white;
+  text-shadow: 0px 2px 0px black, 0px -2px 0px black, 2px 0px 0px black, -2px 0px 0px black, 2px 2px 3px black;
+}
+
+.greenbutton {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #379634;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #105200;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+.greenbutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #105200;
+}
+.greenbutton:active {
+  box-shadow: 0px 1px 0px #105200;
+  transform: translateY(4px);
+}
+
+.purplebutton {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #4C2C72;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #341C4A;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+.purplebutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #341C4A;
+}
+.purplebutton:active {
+  box-shadow: 0px 1px 0px #341C4A;
+  transform: translateY(4px);
+}
+
+.bluebutton {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #256EFF;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #00308F;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+.bluebutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #00308F;
+}
+.bluebutton:active {
+  box-shadow: 0px 1px 0px #00308F;
+  transform: translateY(4px);
+}
+
+.orangebutton {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #F49852;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #F96900;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+.orangebutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #F96900;
+}
+.orangebutton:active {
+  box-shadow: 0px 1px 0px #F96900;
+  transform: translateY(4px);
+}
+
+@keyframes wavy {
+  0%, 100% {
+    transform: translateY(4px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes shaky {
+  0%, 100% {
+    transform: translateX(1px);
+  }
+  50% {
+    transform: translatex(-1px);
+  }
+}
