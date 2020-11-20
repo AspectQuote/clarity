@@ -15,8 +15,8 @@
 }
 
 .greenbutton {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 8px;
   background: #379634;
   color: #fff;
   cursor: pointer;
@@ -27,8 +27,8 @@
   text-shadow: 0px 0px 4px #3f3f3f;
   user-select: none;
   margin-bottom: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 35px;
+  padding-left: 35px;
 }
 .greenbutton:hover {
   filter: brightness(1.2);
@@ -41,8 +41,8 @@
 }
 
 .purplebutton {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 8px;
   background: #4C2C72;
   color: #fff;
   cursor: pointer;
@@ -53,8 +53,8 @@
   text-shadow: 0px 0px 4px #3f3f3f;
   user-select: none;
   margin-bottom: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 35px;
+  padding-left: 35px;
 }
 .purplebutton:hover {
   filter: brightness(1.2);
@@ -67,8 +67,8 @@
 }
 
 .bluebutton {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 8px;
   background: #256EFF;
   color: #fff;
   cursor: pointer;
@@ -79,8 +79,8 @@
   text-shadow: 0px 0px 4px #3f3f3f;
   user-select: none;
   margin-bottom: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 35px;
+  padding-left: 35px;
 }
 .bluebutton:hover {
   filter: brightness(1.2);
@@ -93,8 +93,8 @@
 }
 
 .orangebutton {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 8px;
   background: #F49852;
   color: #fff;
   cursor: pointer;
@@ -105,8 +105,8 @@
   text-shadow: 0px 0px 4px #3f3f3f;
   user-select: none;
   margin-bottom: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 35px;
+  padding-left: 35px;
 }
 .orangebutton:hover {
   filter: brightness(1.2);
@@ -119,8 +119,8 @@
 }
 
 .yellowbutton {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 8px;
   background: #E4CC37;
   color: #fff;
   cursor: pointer;
@@ -131,8 +131,8 @@
   text-shadow: 0px 0px 4px #3f3f3f;
   user-select: none;
   margin-bottom: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  padding-right: 35px;
+  padding-left: 35px;
 }
 .yellowbutton:hover {
   filter: brightness(1.2);
@@ -141,6 +141,58 @@
 }
 .yellowbutton:active {
   box-shadow: 0px 1px 0px #6C5F0F;
+  transform: translateY(4px);
+}
+
+.fuchsiabutton {
+  padding-top: 5px;
+  padding-bottom: 8px;
+  background: #de16da;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #400b3f;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 35px;
+  padding-left: 35px;
+}
+.fuchsiabutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #400b3f;
+}
+.fuchsiabutton:active {
+  box-shadow: 0px 1px 0px #400b3f;
+  transform: translateY(4px);
+}
+
+.redbutton {
+  padding-top: 5px;
+  padding-bottom: 8px;
+  background: #941821;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #4a0a0f;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 35px;
+  padding-left: 35px;
+}
+.redbutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #4a0a0f;
+}
+.redbutton:active {
+  box-shadow: 0px 1px 0px #4a0a0f;
   transform: translateY(4px);
 }
 
