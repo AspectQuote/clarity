@@ -107,7 +107,35 @@ function loadpage(page) {
 
       break;
     case "newgame":
-
+      $("#content").html(`
+        <div style='height: 8%; text-align: center; font-size: 55px; padding-top: 2%; width: 100%; display: inline-block; user-select: none;' id='savegamenew'>Create A New Save Game</div>
+        <div style='height: 5%; font-size: 16px; text-align: center;'>Select Your Character's Appearance</div>
+        <div style='text-align: center;'>
+          <div style='background-image: url(CharacterFaces/GenericMan.png); background-position: 0px 0px; height: 128px; width: 128px; display: inline-block; cursor: pointer;' id='selectbaseface'></div>
+        </div>
+        <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
+      `)
+      var selectedcharacterattribs = {
+        chosenface: false,
+        chosengender: false,
+        stats: {
+          STR: 0,
+          CHA: 0,
+          CLE: 0,
+          HP: 0,
+          TOU: 0,
+          INT: 0,
+          SPD: 0,
+          CLA: 0
+        },
+        trait: false
+      }
+      createtooltip("#selectbaseface", "Basic Face", "white", "Just a normal, generic face. Maybe for if you just want to have a very basic character?", "white")
+      $("#backbutton").unbind()
+      $("#backbutton").click(function(){
+        loadpage("home")
+      })
+      //createdialoguetext("", "", false, false, false, false, "none")
       break;
     case "achievements":
 
