@@ -111,7 +111,94 @@ function loadpage(page) {
         <div style='height: 8%; text-align: center; font-size: 55px; padding-top: 2%; width: 100%; display: inline-block; user-select: none;' id='savegamenew'>Create A New Save Game</div>
         <div style='height: 5%; font-size: 16px; text-align: center;'>Select Your Character's Appearance</div>
         <div style='text-align: center;'>
-          <div style='background-image: url(CharacterFaces/GenericMan.png); background-position: 0px 0px; height: 128px; width: 128px; display: inline-block; cursor: pointer;' id='selectbaseface'></div>
+          <div style='background-image: url(CharacterFaces/GenericMan.png); background-position: 0px 0px; height: 128px; width: 128px; display: inline-block; cursor: pointer; border-radius: 14px; border: 3px solid black;' id='selectbaseface'></div>
+        </div>
+        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Select Your Character's Gender</div>
+        <div style='text-align: center;'>
+          <input type="radio" id="selectmale" name="gender" value="male" style='cursor: pointer;'>
+          <label for="male">Male</label>
+          <input type="radio" id="selectfemale" name="gender" value="female" style='cursor: pointer;'>
+          <label for="female">Female</label>
+        </div>
+        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Give Your Character a Name</div>
+        <div style='text-align: center;'>
+          <input type="text" id="cname" name="cname" placeholder="Your Character's Name!" style='text-shadow: none; width: 40%; height: 25px;'> <div style='display: inline-block;' class='purplebutton'>Randomize</div>
+        </div>
+        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Divide Up Your Skill Points</div>
+        <div style='text-align: center;'>
+          <div id='spleftdisp' style='padding-bottom: 15px;'>You Have 10 Skill Points Left</div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              STRENGTH
+              <img id='decrementstrength' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementstrength' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='strengthpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              CHARISMA
+              <img id='decrementcharisma' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementcharisma' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='charismapointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              INTELLECT
+              <img id='decrementintellect' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementintellect' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='intellectpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              TOUGHNESS
+              <img id='decrementtoughness' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementtoughness' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='toughnesspointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              CLEVERNESS
+              <img id='decrementcleverness' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementcleverness' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='clevernesspointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span style='width: 20%; display: inline-block; font-size: 25px;'>
+              SPEED
+              <img id='decrementspeed' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+              <img id='incrementspeed' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
+            </span>
+            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
+              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
+                <div id='speedpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
       `)
@@ -130,7 +217,10 @@ function loadpage(page) {
         },
         trait: false
       }
-      createtooltip("#selectbaseface", "Basic Face", "white", "Just a normal, generic face. Maybe for if you just want to have a very basic character?", "white")
+      var skillpointsleft = 10
+      createtooltip("#selectbaseface", "Basic Face", "white", "Just a normal, generic character portrait.", "white")
+      createtooltip("#selectmale", "Male", "white", "Give your character male pronouns. (Other characters will refer to your character with those pronouns.)", "white")
+      createtooltip("#selectfemale", "Female", "white", "Give your character female pronouns. (Other characters will refer to your character with those pronouns.)", "white")
       $("#backbutton").unbind()
       $("#backbutton").click(function(){
         loadpage("home")
