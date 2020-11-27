@@ -13,7 +13,7 @@ function createdialoguetext(content, target, bold, italic, slow, spaced, modifie
       var computedmodifier = ""
   }
   var dialoguetext = setInterval(function(){
-    $(target).append(`<span style='font-size: inherit; color: inherit; font-weight: ${(bold == true) ? "bold" : "normal"}; font-style: ${(italic == true) ? "italic" : "normal"}; letter-spacing: ${(spaced == true) ? "4px" : "1px"}; display: inline-block;  ${computedmodifier} '>${((content[interamount] != " ") ? content[interamount] : "<span style='padding-left: 7px;'></span>")}</span>`)
+    $(target).append(`<span style='font-size: inherit; color: inherit; font-weight: ${(bold == true) ? "bold" : "normal"}; font-style: ${(italic == true) ? "italic" : "normal"}; letter-spacing: ${(spaced == true) ? "4px" : "0px"}; display: inline-block;  ${computedmodifier} '>${((content[interamount] != " ") ? content[interamount] : "<span style='padding-left: 7px;'></span>")}</span>`)
     interamount++
     if ($(target).width() == undefined) {
       interamount = content.length
@@ -21,7 +21,7 @@ function createdialoguetext(content, target, bold, italic, slow, spaced, modifie
     if (interamount == content.length) {
       clearInterval(dialoguetext)
     }
-  }, speechspeed*25*((slow != false && slow != undefined) ? 2 : 1))
+  }, speechspeed*15*((slow != false && slow != undefined) ? 2 : 1))
 }
 
 if (localStorage.getItem('savegame') == null) {
@@ -55,7 +55,7 @@ function createtooltip(target, header, headercolor, content, contentcolor){
     $("#tooltipcontent").html('')
   })
 }
-function loadpage(page, invokegamestate) {
+function loadpage(page) {
   switch (page) {
     case "home":
       $("#content").html(`
@@ -64,7 +64,7 @@ function loadpage(page, invokegamestate) {
           <span id='titlescreenflavor' style='font-size: 16px; letter-spacing: 6px; text-shadow: 0px 1px 0px black, 0px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black;'></span>
         </div>
         <div style='height: 60%; text-align: center;'>
-          `+((savegame.gamestate == false) ? `` : `<div class='purplebutton' id='continuebutton' style='display: inline-block; font-size: 25px;'>Continue</div>`)+`<br/>
+          `+((savegame.gamestate === false) ? `` : `<div class='purplebutton' id='continuebutton' style='display: inline-block; font-size: 25px;'>Continue</div>`)+`<br/>
           <div class='greenbutton' id='newgamebutton' style='display: inline-block; font-size: 25px;'>New Game</div><br/>
           <div class='bluebutton' id='achievementsbutton' style='display: inline-block; font-size: 25px;'>Achievements</div><br/>
           <div class='orangebutton' id='endingsbutton' style='display: inline-block; font-size: 25px;'>Endings</div><br/>
@@ -102,24 +102,73 @@ function loadpage(page, invokegamestate) {
       $("#aboutbutton").click(function(){
         loadpage("about")
       })
-      createdialoguetext("A Text Based Adventures by AspectQuote and Garaxshee", "#titlescreenflavor", false, false, false, true, "none")
+      createdialoguetext("Text Based Adventures by AspectQuote and Garaxshee", "#titlescreenflavor", false, false, false, true, "none")
       break;
     case "continue":
       $("#content").html(`
         <div style='position: absolute; top: 0; right: 0; margin: 20px;'>
-          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='yellowbutton' id='homebutton'>Home</div>
-          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='bluebutton' id='savebutton'>Save</div>
+        <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='bluebutton' id='savebutton'>Save</div>
+          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='redbutton' id='homebutton'>Home</div>
         </div>
         <div style='width: 15%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.2);'>
-          <div style='height: 45%; padding-top: 10%;'>Inventory</div>
-          <div style='height: 8%; padding-top: 1%; padding-bottom: 1%; background: rgba(0,0,0,0.2);'>Status Effects</div>
-          <div style='height: 45%;'>Stats and Health</div>
+          <div style='height: 55%;'>
+            <div style='height: 7%; overflow: hidden; padding-top: 5%; font-size: 25px; text-align: center;'>Inventory</div>
+            <div style='height: 88%;'>
+              <div style='height: 90%; width: 90%; margin: 2.5%; padding: 2.5%; border-radius: 15px; background: rgba(0,0,0,0.7);' id='inventorycontainer'></div>
+            </div>
+          </div>
+          <div style='height: 10%; background: rgba(0,0,0,0.2); position: relative;'>
+            <div style='height: 90%; width: 90%; background: rgba(0,0,0,0.3); border-radius: 15px; position: absolute; top: 5%; left: 5%;' id='statuseffectcontainer'></div>
+            <div style='top: 0; left: 0; position: absolute; font-size: 11px; margin: 4px;'>Status Effects</div>
+          </div>
+          <div style='height: 45%;'>
+            <div style='height: 15%;'>
+              <div style='height: 50%; overflow: hidden; cursor: pointer;' id='healthbarcontainer'>
+                <div style='display: inline-block; width: 20%; font-size: 22px; height: 100%; float: left; '>HP</div><div style=' float: left; width: 80%; height: 100%; display: inline-block;'><div style='width: 90%; padding-left: 2.5%; padding-top: 2px; margin-left: 2.5%; height: 20px; margin-top: 5%; background-color: black; border-radius: 5px;'><div id='healthbar' style='background-color: red; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div></div>
+              </div>
+              <div style='height: 50%; overflow: hidden; cursor: pointer;' id='claritybarcontainer'>
+                <div style='display: inline-block; width: 40%; font-size: 22px; height: 100%; float: left; '>Clarity</div><div style=' float: left; width: 60%; height: 100%; display: inline-block;'><div style='width: 90%; padding-left: 2.5%; padding-top: 2px; margin-left: 2.5%; height: 20px; margin-top: 5%; background-color: black; border-radius: 5px;'><div id='claritybar' style='background-color: #094e70; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div></div>
+              </div>
+            </div>
+            <div style='height: 85%; overflow: hidden;'>
+              <div style='float: left; display: inline-block; width: 50%; height: 100%;'>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/IntellectIcon.png' /> INT</div>
+                  <div class='gameplaystatvalue' id='gameplaystatint'></div>
+                </div>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/StrengthIcon.png' /> STR</div>
+                  <div class='gameplaystatvalue' id='gameplaystatstr'></div>
+                </div>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/SpeedIcon.png' /> SPD</div>
+                  <div class='gameplaystatvalue' id='gameplaystatspd'></div>
+                </div>
+              </div>
+              <div style='float: left; display: inline-block; width: 50%; height: 100%;'>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/ConstitutionIcon.png' /> CON</div>
+                  <div class='gameplaystatvalue' id='gameplaystatcon'></div>
+                </div>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/ClevernessIcon.png' /> CLE</div>
+                  <div class='gameplaystatvalue' id='gameplaystatcle'></div>
+                </div>
+                <div class='gameplaystatcontainer'>
+                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/CharismaIcon.png' /> KAR</div>
+                  <div class='gameplaystatvalue' id='gameplaystatkar'></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div style='width: 85%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.4);'>
-          <div style='height: 80%; background: rgba(0,0,0,0.2);'>Terminal/Chat-Type Window</div>
-          <div style='height: 20%; background: rgba(0,0,0,0);'>Choice Buttons</div>
+          <div style='height: 80%; background: rgba(0,0,0,0.2); overflow-y: scroll; overflow-x: hide;' id='terminal'><div style='height: 500px;'></div></div>
+          <div style='height: 20%; background: rgba(0,0,0,0);'></div>
         </div>
       `)
+      updategameplaystats()
+      loadgamestate(savegame.gamestate)
       $("#homebutton").unbind()
       $("#homebutton").click(function(){
         loadpage("home")
@@ -187,7 +236,7 @@ function loadpage(page, invokegamestate) {
         $("#confirmbeginstoryoverlay").fadeIn(250)
         $("#confirmstartchapter").unbind()
         $("#confirmstartchapter").click(function(){
-          savegame = {inventory: [], gamestate: 1, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
+          savegame = {inventory: [], gamestate: 0, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
           savethegame()
         })
         createtooltip("#confirmstartchapter", "Confirm", "white", "Start the tutorial for me, please!", "white")
@@ -345,6 +394,40 @@ function loadpage(page, invokegamestate) {
   $("#tooltipheader").text('')
   $("#tooltipcontent").text('')
 }
+
+function updategameplaystats(){
+  $("#healthbar").css("width", (((savegame.stats.hp/savegame.stats.maxhp)*100)-2.5)+"%")
+  $("#healthbarcontainer").unbind()
+  createtooltip("#healthbarcontainer", savegame.stats.hp+"/"+savegame.stats.maxhp+" HP", "red", "", "white")
+
+  $("#claritybar").css("width", (((savegame.stats.clar/50)*100)-2.5)+"%")
+  $("#claritybarcontainer").unbind()
+  createtooltip("#claritybarcontainer", savegame.stats.clar+"/50 Clarity", "#094e70", "", "white")
+
+  $("#gameplaystatint").html(savegame.stats.int)
+  $("#gameplaystatint").unbind()
+  createtooltip("#gameplaystatint", "Intellect", "white", "The Quantification of your intelligence, common sense, and mental fortitude.", "white")
+  $("#gameplaystatstr").html(savegame.stats.str)
+  $("#gameplaystatstr").unbind()
+  createtooltip("#gameplaystatstr", "Strength", "white", "A numerical value representing how physically strong you are.", "white")
+  $("#gameplaystatspd").html(savegame.stats.spd)
+  $("#gameplaystatspd").unbind()
+  createtooltip("#gameplaystatspd", "Speed", "white", "How fast you are, in both reaction time and dexterity.", "white")
+  $("#gameplaystatcon").html(savegame.stats.con)
+  $("#gameplaystatcon").unbind()
+  createtooltip("#gameplaystatcon", "Constitution", "white", "How <i>tough</i> you are physically. How much physical punishment you can take.", "white")
+  $("#gameplaystatcle").html(savegame.stats.cle)
+  $("#gameplaystatcle").unbind()
+  createtooltip("#gameplaystatcle", "Cleverness", "white", "Your wit and critical thinking skills.", "white")
+  $("#gameplaystatkar").html(savegame.stats.karma)
+  $("#gameplaystatkar").unbind()
+  createtooltip("#gameplaystatkar", "Karma", "white", "A mysterious force that decides how you are treated by some people.", "white")
+}
+
+// EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
+// EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
+// EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
+
 achievements = []
 function createachievement(name, desc, icon){achievements.push({name: name, desc: desc, icon: icon})}
 createachievement("Test Achievement", "An Achievement for achievement testing!", "Icons/questionmark.png")
@@ -362,8 +445,23 @@ function createitem(name, icon, rarity, description){items.push({name: name, ico
 characters = {
   developer: {
     name: "Narrator",
-    icon: "Icons/baseface.png"
+    icon: "CharacterFaces/GenericMan.png"
   }
+}
+function animatespeech(target, text, emo, slow) {
+  var textloopnum = 0
+  var animspeech = setInterval(function(){
+    if ($(target).css("background-position") != emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px") {
+      $(target).css("background-position", emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px")
+    } else {
+      $(target).css("background-position", emotemap[emo][1][0]+"px "+emotemap[emo][1][1]+"px")
+    }
+    textloopnum += 2
+    if (textloopnum >= text.length) {
+      clearInterval(animspeech)
+      $(target).css("background-position", emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px")
+    }
+  }, (speechspeed*15*((slow != false && slow != undefined) ? 2 : 1))*2)
 }
 
 window.onload = init;
@@ -381,13 +479,38 @@ $(document).ready(function(){
   loadpage("home")
 })
 
-// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
-// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
-// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
+// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
+// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
+// EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
 
+msgnum = 0
+spp = 0
+emotemap = {
+  neutral: [[0,0], [-150,0]],
+  happy: [[-300,0], [-450,0]],
+  sad: [[-600,0], [-750,0]],
+  skeptical: [[-900,0], [-1050,0]],
+
+  notimpressed: [[0,-150], [-150,-150]],
+  selfassured: [[-300,-150], [-450,-150]],
+  surprised: [[-600,-150], [-750,-150]],
+  wary: [[-900,-150], [-1050,-150]],
+
+  worried: [[0,-300], [-150,-300]],
+  annoyed: [[-300,-300], [-450,-300]],
+  contemplative: [[-600,-300], [-750,-300]],
+  evil: [[-900,-300], [-1050,-300]],
+
+  disgusted: [[0,-450], [-150,-450]]
+}
 function loadgamestate(state){
   if (gamestates[state] != undefined && gamestates[state] != null) {
-
+    currentstate = state
+    $("#terminal").append("<div class='terminalentry'><div style='height: 100%; width: 12%; float: left; display: inline-block;'><div id='terminalportrait"+msgnum+"' style='height: 150px; width: 150px; margin: 9px; border: 2px solid white; border-radius: 10px; background-image: url("+characters[gamestates[state].dialogue[spp].char].icon+"); background-position: "+emotemap[gamestates[state].dialogue[spp].emo][0][0]+"px "+emotemap[gamestates[state].dialogue[spp].emo][0][1]+"px; background-size: 1200px;'></div></div><div style='width: 88%; display: inline-block; float: left; height: 100%; font-size: 30px;' id='terminalentrydialogue"+msgnum+"'></div></div>")
+    createdialoguetext(gamestates[state].dialogue[spp].text, "#terminalentrydialogue"+msgnum, ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.bold), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.italic), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.spaced), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.mod))
+    animatespeech("#terminalportrait"+msgnum, gamestates[state].dialogue[spp].text, gamestates[state].dialogue[spp].emo, ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow))
+    msgnum++
+    spp++
   } else {
     console.error("Gamestate "+state+" failed to load due to not existing or being null.")
   }
@@ -403,7 +526,7 @@ function creategamestate(dialogue, choices, func) {
 // Tutorial GAMESTATES (States 1-)
 creategamestate(
   [
-    {char: "developer", text: "Welcome to Clarity! I am so glad you could start playing!", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Welcome to Clarity! I am so glad you could start playing!", mod: "none", color: "white", emo: "selfassured"},
     {char: "developer", text: "This tutorial will teach you the basics of how to play clarity. What would you like to learn about?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
