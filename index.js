@@ -24,19 +24,20 @@ function createdialoguetext(content, target, bold, italic, slow, spaced, modifie
   }, speechspeed*25*((slow != false && slow != undefined) ? 2 : 1))
 }
 
-if (localStorage.getItem('saves') == null) {
-  localStorage.setItem('saves', JSON.stringify([]))
+if (localStorage.getItem('savegame') == null) {
+  localStorage.setItem('savegame', JSON.stringify({inventory: [], gamestate: false, statuseffects: [], stats: {hp: 0, clar: 0, int: 0, str: 0, spd: 0, con: 0, cle: 0}, standing: {}, party: {}}))
   console.log("First Time Startup Detected. Creating Saves Storage Object.")
 }
-if (localStorage.getItem('endings') == null) {
-  localStorage.setItem('endings', JSON.stringify([]))
+if (localStorage.getItem('completion') == null) {
+  localStorage.setItem('completion', JSON.stringify({items: [], endings: [], achievements: [], chaptersunlocked: 1}))
 }
-if (localStorage.getItem('achievements') == null) {
-  localStorage.setItem('achievements', JSON.stringify([]))
+var completion = JSON.parse(localStorage.getItem('completion'))
+var savegame = JSON.parse(localStorage.getItem('savegame'))
+
+function savegame(){
+  localStorage.setItem('completion', JSON.stringify(completion))
+  localStorage.setItem('savegame', JSON.stringify(savegame))
 }
-var achievements = JSON.parse(localStorage.getItem('achievements'))
-var endings = JSON.parse(localStorage.getItem('endings'))
-var saves = JSON.parse(localStorage.getItem('saves'))
 
 function createtooltip(target, header, headercolor, content, contentcolor){
   $(target).mouseover(function(){
@@ -63,8 +64,8 @@ function loadpage(page) {
           <span id='titlescreenflavor' style='font-size: 16px; letter-spacing: 6px; text-shadow: 0px 1px 0px black, 0px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black;'></span>
         </div>
         <div style='height: 60%; text-align: center;'>
+          <div class='purplebutton' id='continuebutton' style='display: inline-block; font-size: 25px;'>Continue</div><br/>
           <div class='greenbutton' id='newgamebutton' style='display: inline-block; font-size: 25px;'>New Game</div><br/>
-          <div class='purplebutton' id='loadsavebutton' style='display: inline-block; font-size: 25px;'>Load Save</div><br/>
           <div class='bluebutton' id='achievementsbutton' style='display: inline-block; font-size: 25px;'>Achievements</div><br/>
           <div class='orangebutton' id='endingsbutton' style='display: inline-block; font-size: 25px;'>Endings</div><br/>
           <div class='yellowbutton' id='optionsbutton' style='display: inline-block; font-size: 25px;'>Options</div><br/>
@@ -72,24 +73,19 @@ function loadpage(page) {
         </div>
       `)
       $("#newgamebutton").unbind()
-      createtooltip("#newgamebutton", "Create A New Game", "white", "Create a new character, choose their path and customize them!", "white")
+      createtooltip("#newgamebutton", "Create A New Game", "white", "Select a chapter and start a new adventure!", "white")
       $("#newgamebutton").click(function(){
         loadpage("newgame")
       })
-      $("#loadsavebutton").unbind()
-      createtooltip("#loadsavebutton", "Load Your Game", "white", "Continue your adventure!", "white")
-      $("#loadsavebutton").click(function(){
-        loadpage("saves")
+      $("#continuebutton").unbind()
+      createtooltip("#continuebutton", "Continue Your Adventure", "white", "Continue your adventure from where you last saved!", "white")
+      $("#continuebutton").click(function(){
+        loadpage("continue")
       })
       $("#achievementsbutton").unbind()
-      createtooltip("#achievementsbutton", "Achievements", "white", "View your achievement progress, and see what you still haven't completed!", "white")
+      createtooltip("#achievementsbutton", "Completion", "white", "View your achievement progress, ending progress, item progress, and see what you still haven't done!", "white")
       $("#achievementsbutton").click(function(){
         loadpage("achievements")
-      })
-      $("#endingsbutton").unbind()
-      createtooltip("#endingsbutton", "Endings", "white", "View your ending progress, and see which endings you haven't been able to achieve!", "white")
-      $("#endingsbutton").click(function(){
-        loadpage("endings")
       })
       $("#optionsbutton").unbind()
       createtooltip("#optionsbutton", "Options", "white", "Adjust the dialogue speed or clear your progress!", "white")
@@ -97,135 +93,71 @@ function loadpage(page) {
         loadpage("options")
       })
       $("#aboutbutton").unbind()
-      createtooltip("#aboutbutton", "About", "white", "Read what this game is about!", "white")
+      createtooltip("#aboutbutton", "About", "white", "Read what this game is about! (Credits and backstory of the development of Clarity)", "white")
       $("#aboutbutton").click(function(){
         loadpage("about")
       })
       createdialoguetext("A Text Based Adventure Game by AspectQuote and Garaxshee", "#titlescreenflavor", false, false, false, true, "none")
       break;
-    case "saves":
+    case "continue":
 
       break;
     case "newgame":
       $("#content").html(`
-        <div style='height: 8%; text-align: center; font-size: 55px; padding-top: 2%; width: 100%; display: inline-block; user-select: none;' id='savegamenew'>Create A New Save Game</div>
-        <div style='height: 5%; font-size: 16px; text-align: center;'>Select Your Character's Appearance</div>
-        <div style='text-align: center;'>
-          <div style='background-image: url(CharacterFaces/GenericMan.png); background-position: 0px 0px; height: 128px; width: 128px; display: inline-block; cursor: pointer; border-radius: 14px; border: 3px solid black;' id='selectbaseface'></div>
-        </div>
-        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Select Your Character's Gender</div>
-        <div style='text-align: center;'>
-          <input type="radio" id="selectmale" name="gender" value="male" style='cursor: pointer;'>
-          <label for="male">Male</label>
-          <input type="radio" id="selectfemale" name="gender" value="female" style='cursor: pointer;'>
-          <label for="female">Female</label>
-        </div>
-        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Give Your Character a Name</div>
-        <div style='text-align: center;'>
-          <input type="text" id="cname" name="cname" placeholder="Your Character's Name!" style='text-shadow: none; width: 40%; height: 25px;'> <div style='display: inline-block;' class='purplebutton'>Randomize</div>
-        </div>
-        <div style='height: 4%; padding-top: 1%; font-size: 16px; text-align: center;'>Divide Up Your Skill Points</div>
-        <div style='text-align: center;'>
-          <div id='spleftdisp' style='padding-bottom: 15px;'>You Have 10 Skill Points Left</div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              STRENGTH
-              <img id='decrementstrength' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementstrength' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='strengthpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
+        <div style='font-size: 60px; height: 20%; padding-top: 5%; padding-left: 50px;'>Select Chapter</div>
+        <div style='height: 75%;'>
+          <div class='storyheader'>Ballistika</div>
+          <div class='chapterselectcontainer' id='selectchapter1'>
+            <div class='chapterselectheader'>Chapter 1: Birth</div>
+            <div class='chapterselectcontent' id='chapterdesc1'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
           </div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              CHARISMA
-              <img id='decrementcharisma' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementcharisma' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='charismapointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
+          <div class='chapterselectcontainer' id='selectchapter2'>
+            <div class='chapterselectheader'>Chapter 2: Mother</div>
+            <div class='chapterselectcontent' id='chapterdesc2'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
           </div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              INTELLECT
-              <img id='decrementintellect' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementintellect' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='intellectpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
+          <div class='chapterselectcontainer' id='selectchapter3'>
+            <div class='chapterselectheader'>Chapter 3: Gladiator</div>
+            <div class='chapterselectcontent' id='chapterdesc3'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
           </div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              TOUGHNESS
-              <img id='decrementtoughness' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementtoughness' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='toughnesspointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
+          <div class='chapterselectcontainer' id='selectchapter4'>
+            <div class='chapterselectheader'>Chapter 4: The Mirror</div>
+            <div class='chapterselectcontent' id='chapterdesc4'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
           </div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              CLEVERNESS
-              <img id='decrementcleverness' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementcleverness' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='clevernesspointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <span style='width: 20%; display: inline-block; font-size: 25px;'>
-              SPEED
-              <img id='decrementspeed' src='icons/MinusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-              <img id='incrementspeed' src='icons/PlusIcon.png' style='margin-left: 10px; cursor: pointer; height: 22px; image-rendering: pixelated;'/>
-            </span>
-            <div style='width: 70%; display: inline-block; background-color: black; border-radius: 3px; height: 22px; text-align: left;'>
-              <div style='color: white; height: 18px; font-size: 11px; padding: 2px; overflow: hidden;'>
-                <div id='speedpointsgiven' style='border-radius: 4px; color: inherit; background-color: rgba(255,255,255,0.6); font-size: 13px; height: 100%; width: 0%;'>0 Points</div>
-              </div>
-            </div>
+          <div class='chapterselectcontainer' id='selectchapter5'>
+            <div class='chapterselectheader'>Chapter 5: Death</div>
+            <div class='chapterselectcontent' id='chapterdesc5'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
           </div>
         </div>
         <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
       `)
-      var selectedcharacterattribs = {
-        chosenface: false,
-        chosengender: false,
-        stats: {
-          STR: 0,
-          CHA: 0,
-          CLE: 0,
-          HP: 0,
-          TOU: 0,
-          INT: 0,
-          SPD: 0,
-          CLA: 0
-        },
-        trait: false
-      }
-      var skillpointsleft = 10
-      createtooltip("#selectbaseface", "Basic Face", "white", "Just a normal, generic character portrait.", "white")
-      createtooltip("#selectmale", "Male", "white", "Give your character male pronouns. (Other characters will refer to your character with those pronouns.)", "white")
-      createtooltip("#selectfemale", "Female", "white", "Give your character female pronouns. (Other characters will refer to your character with those pronouns.)", "white")
       $("#backbutton").unbind()
       $("#backbutton").click(function(){
         loadpage("home")
       })
-      //createdialoguetext("", "", false, false, false, false, "none")
+      if (completion.chaptersunlocked >= 2) {
+
+      } else {
+        $("#selectchapter2").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
+        $("#chapterdesc2").html("")
+      }
+      if (completion.chaptersunlocked >= 3) {
+
+      } else {
+        $("#selectchapter3").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
+        $("#chapterdesc3").html("")
+      }
+      if (completion.chaptersunlocked >= 4) {
+
+      } else {
+        $("#selectchapter4").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
+        $("#chapterdesc4").html("")
+      }
+      if (completion.chaptersunlocked >= 5) {
+
+      } else {
+        $("#selectchapter5").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
+        $("#chapterdesc5").html("")
+      }
       break;
     case "achievements":
 
@@ -241,6 +173,7 @@ function loadpage(page) {
         <div id='casbutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL SAVES</div><br/>
         <div id='caabutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ACHIEVEMENT PROGRESS</div><br/>
         <div id='caebutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ENDING PROGRESS</div>
+        <div id='caibutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ITEM COLLECTION PROGRESS</div>
       </div>
 
       <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
