@@ -42,17 +42,17 @@ function savegame(){
 function createtooltip(target, header, headercolor, content, contentcolor){
   $(target).mouseover(function(){
     $("#tooltipheader").css('color', headercolor)
-    $("#tooltipheader").text(header)
+    $("#tooltipheader").html(header)
   })
   $(target).mouseleave(function(){
-    $("#tooltipheader").text('')
+    $("#tooltipheader").html('')
   })
   $(target).mouseover(function(){
     $("#tooltipcontent").css('color', contentcolor)
-    $("#tooltipcontent").text(content)
+    $("#tooltipcontent").html(content)
   })
   $(target).mouseleave(function(){
-    $("#tooltipcontent").text('')
+    $("#tooltipcontent").html('')
   })
 }
 function loadpage(page) {
@@ -106,7 +106,7 @@ function loadpage(page) {
       $("#content").html(`
         <div style='font-size: 60px; height: 20%; padding-top: 5%; padding-left: 50px;'>Select Chapter</div>
         <div style='height: 75%;'>
-          <div class='storyheader'>Ballistika</div>
+          <div class='storyheader'>Book 1: Ballistika</div>
           <div class='chapterselectcontainer' id='selectchapter1'>
             <div class='chapterselectheader'>Chapter 1: Birth</div>
             <div class='chapterselectcontent' id='chapterdesc1'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
@@ -160,7 +160,20 @@ function loadpage(page) {
       }
       break;
     case "achievements":
-
+        $("#content").html(`
+          <div style='font-size: 60px; height: 20%; padding-top: 5%; padding-left: 50px;'>Achievements</div>
+          <div style='height: 80%; overflow-y: scroll; overflow-x: hidden;' id='achievementscontainer'></div>
+          <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
+        `)
+        $("#backbutton").unbind()
+        $("#backbutton").click(function(){
+          loadpage("home")
+        })
+        for (var i = 0; i < achievements.length; i++) {
+          achievements[i]
+          $("#achievementscontainer").append("<div id='achievement"+i+"' class='achievementcontainer'><img src='"+achievements[i].icon+"' style='width: 100%; height: 100%; border-radius: 14px;' /></div>")
+          createtooltip("#achievement"+i, achievements[i].name, "white", achievements[i].desc+((completion.achievements.includes(i)) ? " <span style='color: green;'>UNLOCKED</span>" : " <span style='color: red;'>LOCKED</span>"), "#424242")
+        }
       break;
     case "endings":
 
@@ -172,7 +185,7 @@ function loadpage(page) {
         <div id='dialoguespeedbutton' class='purplebutton' style='margin-bottom: 30px; display: inline-block;'>Dialogue Speed (1x)</div><br/>
         <div id='casbutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL SAVES</div><br/>
         <div id='caabutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ACHIEVEMENT PROGRESS</div><br/>
-        <div id='caebutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ENDING PROGRESS</div>
+        <div id='caebutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ENDING PROGRESS</div><br />
         <div id='caibutton' class='redbutton' style='margin-bottom: 30px; display: inline-block;'>CLEAR ALL ITEM COLLECTION PROGRESS</div>
       </div>
 
@@ -229,7 +242,7 @@ function loadpage(page) {
             <div style='font-size: 12px; text-align: center; width: 100%;'>Super Coder Man</div>
           </div>
           <div style='display: inline-block; text-align: center; margin-left: 20px;'>
-            <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='https://cdn.discordapp.com/avatars/280137517431390208/f494272e8fafaf6175494aaad86b9227.png' />
+            <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='Icons/garaxsheepfp.png' />
             <div style='font-size: 16px; text-align: center; width: 100%;' id='GaraxName'></div>
             <div style='font-size: 12px; text-align: center; width: 100%;'>Super Designer Man</div>
           </div>
@@ -253,6 +266,8 @@ function loadpage(page) {
   $("#tooltipheader").text('')
   $("#tooltipcontent").text('')
 }
+achievements = []
+function createachievement(name, desc, icon){achievements.push({name: name, desc: desc, icon: icon})}
 window.onload = init;
 function init() {
 	if (window.Event) {

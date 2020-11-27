@@ -293,3 +293,18 @@
   color: inherit;
   font-size: inherit;
 }
+
+.achievementcontainer {
+  height: 75px;
+  width: 75px;
+  display: inline-block;
+  background: rgba(0,0,0,0.4);
+  border-radius: 14px;
+  filter: saturate(0.5);
+  transition: 0.5s;
+  margin: 10px;
+}
+.achievementcontainer:hover {
+  cursor: pointer;
+  filter: saturate(1.2);
+}
