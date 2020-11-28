@@ -212,8 +212,8 @@ function loadpage(page) {
             <div class='centerme' style='user-select: none; width: 50%;'>
               <div id='startchapterflavor' style='font-size: 20px; margin-bottom: 20px; '>Begin Chapter #??? of ???</div>
               <div style='text-align: center;'>
-                <div class='greenbutton' id='confirmstartchapter' style='display: inline-block; margin-bottom: 20px; margin-right: 20px;'>lmao yeah</div>
-                <div class='redbutton' id='cancelstartchapter' style='display: inline-block; margin-bottom: 20px; '>naw</div>
+                <div class='greenbutton' id='confirmstartchapter' style='display: inline-block; margin-bottom: 20px; margin-right: 20px;'>Confirm</div>
+                <div class='redbutton' id='cancelstartchapter' style='display: inline-block; margin-bottom: 20px; '>Cancel</div>
               </div>
               <div style='color: red;'>WARNING: STARTING A NEW CHAPTER WILL IMMEDIATELY OVERWRITE ANY OTHER SAVE GAME YOU HAVE IN PROGRESS RIGHT THIS MOMENT. ONLY CONFIRM IF YOU ARE 100% SURE.</div>
             </div>
@@ -238,6 +238,7 @@ function loadpage(page) {
         $("#confirmstartchapter").click(function(){
           savegame = {inventory: [], gamestate: 0, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
           savethegame()
+          loadpage("continue")
         })
         createtooltip("#confirmstartchapter", "Confirm", "white", "Start the tutorial for me, please!", "white")
       })
