@@ -106,10 +106,6 @@ function loadpage(page) {
       break;
     case "continue":
       $("#content").html(`
-        <div style='position: absolute; top: 0; right: 0; margin: 20px;'>
-        <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='bluebutton' id='savebutton'>Save</div>
-          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='redbutton' id='homebutton'>Home</div>
-        </div>
         <div style='width: 15%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.2);'>
           <div style='height: 55%;'>
             <div style='height: 7%; overflow: hidden; padding-top: 5%; font-size: 25px; text-align: center;'>Inventory</div>
@@ -163,10 +159,45 @@ function loadpage(page) {
           </div>
         </div>
         <div style='width: 85%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.4);'>
-          <div style='height: 80%; background: rgba(0,0,0,0.2); overflow-y: scroll; overflow-x: hide;' id='terminal'><div style='height: 500px;'></div></div>
-          <div style='height: 20%; background: rgba(0,0,0,0);'></div>
+          <div style='height: 77%; background: rgba(0,0,0,0.2); position: relative;' id='graphics'>
+            <div style='position: absolute; bottom: 0; left: 0; display: inline-block; width: 100%; height: 200px;'>
+              <div style='height: 100%; width: 100%; position: relative; display: inline-block;'>
+                <div style='width: 95%; height: 90%; margin-right: 2.5%; margin-left: 2.5%; background: rgba(0,0,0,0.4); border-radius: 14px;'>
+                  <div style='width: 20%; height: 100%; display: inline-block; float: left;'>
+                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px;' id='dialogueportrait'></div>
+                  </div>
+                  <div style='width: 75%; height: 100%; display: inline-block; float: left; font-size: 19px;'>
+                    <div style='height: 25%; width: 100%; font-size: 30px; overflow: hidden; padding-left: 10px;' id='dialoguename'>Name</div>
+                    <div id='dialoguebox' style='height: 65%; overflow-y: scroll; overflow-x: hidden; font-size: inherit;'></div>
+                  </div>
+                </div>
+                <div style='position: absolute; bottom: 5px; right: 5px; margin: 10px; padding-right: 10px; padding-left: 10px;' class='graybutton' id='dialoguenextbutton'>Next</div>
+              </div>
+            </div>
+          </div>
+          <div style='height: 23%; background: rgba(0,0,0,0);' id='choicebuttonscontainer'>
+            <div id='choicebuttoncontainer1' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton1'>Choice #1</div></div>
+            <div id='choicebuttoncontainer2' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton2'>Choice #2</div></div>
+            <div id='choicebuttoncontainer3' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton3'>Choice #3</div></div>
+            <div id='choicebuttoncontainer4' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton4'>Choice #4</div></div>
+          </div>
+        </div>
+        <div style='position: absolute; top: 0; right: 0; margin: 20px;'>
+          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='bluebutton' id='savebutton'>Save</div>
+          <div style='display: inline-block; padding-left: 15px; padding-right: 15px; margin: 5px;' class='redbutton' id='homebutton'>Home</div>
         </div>
       `)
+      $("#choicebuttoncontainer1").hide()
+      $("#choicebuttoncontainer2").hide()
+      $("#choicebuttoncontainer3").hide()
+      $("#choicebuttoncontainer4").hide()
+      if (gamestates[currentstate].dialogue[spp+1] == undefined) {
+        $("#dialoguenextbutton").unbind()
+        $("#dialoguenextbutton").hide()
+      } else {
+        $("#dialoguenextbutton").unbind()
+        $("#dialoguenextbutton").fadeIn(250)
+      }
       updategameplaystats()
       loadgamestate(savegame.gamestate)
       $("#homebutton").unbind()
@@ -451,6 +482,7 @@ characters = {
 }
 function animatespeech(target, text, emo, slow) {
   var textloopnum = 0
+  $("#dialoguenextbutton").fadeOut(250)
   var animspeech = setInterval(function(){
     if ($(target).css("background-position") != emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px") {
       $(target).css("background-position", emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px")
@@ -461,6 +493,100 @@ function animatespeech(target, text, emo, slow) {
     if (textloopnum >= text.length) {
       clearInterval(animspeech)
       $(target).css("background-position", emotemap[emo][0][0]+"px "+emotemap[emo][0][1]+"px")
+      if (gamestates[currentstate].dialogue[spp+1] == undefined) {
+        $("#dialoguenextbutton").fadeOut(250)
+        $("#dialoguenextbutton").unbind()
+        $("#choicebuttoncontainer1").fadeIn(1000)
+        $("#choicebutton1").html(gamestates[currentstate].choices[0].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[0].desc+"</span>")
+        $("#choicebutton1").attr('class', gamestates[currentstate].choices[0].butcol+"button")
+        $("#choicebutton1").css('color', gamestates[currentstate].choices[0].col)
+        $("#choicebutton1").unbind()
+        $("#choicebutton1").click(function(){
+          if (gamestates[currentstate].choices[0].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[0].condition[0]] >= gamestates[currentstate].choices[0].condition[1]) {
+            spp = 0
+            savethegame()
+            loadgamestate(gamestates[currentstate].choices[0].state)
+          } else {
+            console.log("Prevented Successfully!")
+          }
+        })
+        if (gamestates[currentstate].choices[0].condition[0] != "none") {
+          createtooltip("#choicebutton1", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[0].condition[0]] >= gamestates[currentstate].choices[0].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[0].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[0].condition[1]+".", "white")
+        }
+        if (gamestates[currentstate].choices[1] != undefined) {
+          $("#choicebuttoncontainer2").fadeIn(1000)
+          $("#choicebutton2").html(gamestates[currentstate].choices[1].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[1].desc+"</span>")
+          $("#choicebutton2").attr('class', gamestates[currentstate].choices[1].butcol+"button")
+          $("#choicebutton2").css('color', gamestates[currentstate].choices[1].col)
+          $("#choicebutton2").unbind()
+          $("#choicebutton2").click(function(){
+            if (gamestates[currentstate].choices[1].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[1].condition[0]] >= gamestates[currentstate].choices[1].condition[1]) {
+              spp = 0
+              savethegame()
+              loadgamestate(gamestates[currentstate].choices[1].state)
+            } else {
+              console.log("Prevented Successfully!")
+            }
+          })
+          if (gamestates[currentstate].choices[1].condition[0] != "none") {
+            createtooltip("#choicebutton2", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[1].condition[0]] >= gamestates[currentstate].choices[1].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[1].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[1].condition[1]+".", "white")
+          }
+        } else {
+          $("#choicebuttoncontainer2").hide()
+          $("#choicebuttoncontainer2").unbind()
+        }
+        if (gamestates[currentstate].choices[2] != undefined) {
+          $("#choicebuttoncontainer3").fadeIn(1000)
+          $("#choicebutton3").html(gamestates[currentstate].choices[2].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[2].desc+"</span>")
+          $("#choicebutton3").attr('class', gamestates[currentstate].choices[2].butcol+"button")
+          $("#choicebutton3").css('color', gamestates[currentstate].choices[2].col)
+          $("#choicebutton3").unbind()
+          $("#choicebutton3").click(function(){
+            if (gamestates[currentstate].choices[2].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[2].condition[0]] >= gamestates[currentstate].choices[2].condition[1]) {
+              spp = 0
+              savethegame()
+              loadgamestate(gamestates[currentstate].choices[2].state)
+            } else {
+              console.log("Prevented Successfully!")
+            }
+          })
+          if (gamestates[currentstate].choices[2].condition[0] != "none") {
+            createtooltip("#choicebutton3", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[2].condition[0]] >= gamestates[currentstate].choices[2].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[2].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[2].condition[1]+".", "white")
+          }
+        } else {
+          $("#choicebuttoncontainer3").hide()
+          $("#choicebuttoncontainer3").unbind()
+        }
+        if (gamestates[currentstate].choices[3] != undefined) {
+          $("#choicebuttoncontainer4").fadeIn(1000)
+          $("#choicebutton4").html(gamestates[currentstate].choices[3].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[3].desc+"</span>")
+          $("#choicebutton4").attr('class', gamestates[currentstate].choices[3].butcol+"button")
+          $("#choicebutton4").css('color', gamestates[currentstate].choices[3].col)
+          $("#choicebutton4").unbind()
+          $("#choicebutton4").click(function(){
+            if (gamestates[currentstate].choices[3].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[3].condition[0]] >= gamestates[currentstate].choices[3].condition[1]) {
+              spp = 0
+              savethegame()
+              loadgamestate(gamestates[currentstate].choices[3].state)
+            } else {
+              console.log("Prevented Successfully!")
+            }
+          })
+          if (gamestates[currentstate].choices[3].condition[0] != "none") {
+            createtooltip("#choicebutton4", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[3].condition[0]] >= gamestates[currentstate].choices[3].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[3].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[3].condition[1]+".", "white")
+          }
+        } else {
+          $("#choicebuttoncontainer4").hide()
+          $("#choicebuttoncontainer4").unbind()
+        }
+      } else {
+        $("#dialoguenextbutton").fadeIn(250)
+        $("#dialoguenextbutton").unbind()
+      }
+      $("#dialoguenextbutton").click(function(){
+        spp++
+        loadgamestate(currentstate)
+      })
     }
   }, (speechspeed*15*((slow != false && slow != undefined) ? 2 : 1))*2)
 }
@@ -486,6 +612,7 @@ $(document).ready(function(){
 
 msgnum = 0
 spp = 0
+currentstate = savegame.gamestate
 emotemap = {
   neutral: [[0,0], [-150,0]],
   happy: [[-300,0], [-450,0]],
@@ -507,11 +634,17 @@ emotemap = {
 function loadgamestate(state){
   if (gamestates[state] != undefined && gamestates[state] != null) {
     currentstate = state
-    $("#terminal").append("<div class='terminalentry'><div style='height: 100%; width: 12%; float: left; display: inline-block;'><div id='terminalportrait"+msgnum+"' style='height: 150px; width: 150px; margin: 9px; border: 2px solid white; border-radius: 10px; background-image: url("+characters[gamestates[state].dialogue[spp].char].icon+"); background-position: "+emotemap[gamestates[state].dialogue[spp].emo][0][0]+"px "+emotemap[gamestates[state].dialogue[spp].emo][0][1]+"px; background-size: 1200px;'></div></div><div style='width: 88%; display: inline-block; float: left; height: 100%; font-size: 30px;' id='terminalentrydialogue"+msgnum+"'></div></div>")
-    createdialoguetext(gamestates[state].dialogue[spp].text, "#terminalentrydialogue"+msgnum, ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.bold), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.italic), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.spaced), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.mod))
-    animatespeech("#terminalportrait"+msgnum, gamestates[state].dialogue[spp].text, gamestates[state].dialogue[spp].emo, ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow))
+    savegame.gamestate = state
+    $("#choicebuttoncontainer1").fadeOut(500)
+    $("#choicebuttoncontainer2").fadeOut(500)
+    $("#choicebuttoncontainer3").fadeOut(500)
+    $("#choicebuttoncontainer4").fadeOut(500)
+    $("#dialoguebox").html('')
+    createdialoguetext(gamestates[state].dialogue[spp].text, "#dialoguebox", ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.bold), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.italic), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.spaced), ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.mod))
+    $("#dialogueportrait").css("background-image", "url('"+characters[gamestates[state].dialogue[spp].char].icon+"')")
+    $("#dialoguename").html(characters[gamestates[state].dialogue[spp].char].name)
+    animatespeech("#dialogueportrait", gamestates[state].dialogue[spp].text, gamestates[state].dialogue[spp].emo, ((gamestates[state].dialogue[spp].mod === "none") ? false : gamestates[state].dialogue[spp].mod.slow))
     msgnum++
-    spp++
   } else {
     console.error("Gamestate "+state+" failed to load due to not existing or being null.")
   }
@@ -527,16 +660,73 @@ function creategamestate(dialogue, choices, func) {
 // Tutorial GAMESTATES (States 1-)
 creategamestate(
   [
-    {char: "developer", text: "Welcome to Clarity! I am so glad you could start playing!", mod: "none", color: "white", emo: "selfassured"},
-    {char: "developer", text: "This tutorial will teach you the basics of how to play clarity. What would you like to learn about?", mod: "none", color: "white", emo: "neutral"}
+    {char: "developer", text: "Welcome to Clarity! I am so glad you decided to learn how to play the game!", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "This tutorial will teach you the basics of how to play Clarity. What would you like to learn about?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and item rarity is.", col: "white", butcol: "green", state: 2},
-    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 3},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 4},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I affect them.", col: "white", butcol: "blue", state: 5}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+  ],
+  function(){
+    // Game-Altering Code Goes here
+  }
+) // Starting Text
+creategamestate(
+  [
+    {char: "developer", text: "The inventory system in clarity is very simple.", mod: "none", color: "white", emo: "selfassured"},
+    {char: "developer", text: "Your items are displayed at the top right of your screen, and you have no maximum inventory slot limit.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "When you hover your cursor over an item, you will get to see that item's tooltip.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "The tooltip will show you all sorts of information like the item's rarity, name and description.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Speaking of which, rarity in Clarity works very simply.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "The warmer and more saturated the color of the item's name is, the rarer it is. To contrast, the less saturated and cooler the color is, the more common it is.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "For example, an item with a bright red name is very rare, but an item with a white name is very common.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Seem simple enough? What would you like me to explain next?", mod: "none", color: "white", emo: "happy"}
+  ],
+  [
+    {name: "My Inventory", desc: "Explain to me how the inventory system works again, please.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+  ],
+  function(){
+    // Game-Altering Code Goes here
+  }
+) // Explaining Inventory
+creategamestate(
+  [
+    {char: "developer", text: "Status effects in Clarity are a very odd mechanic.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "When you become afflicted with a status effect, it will show on the left of your screen, just beneath the inventory.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Hovering your cursor over the effect will display a tooltip with information about the effect.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Status effects can have a multitude of effects on you.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Some can drain your health, make your party members dislike you, or even lock you out of certain choices!", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Status effects can wear off, but some stick with you forever or can just be cured.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "That's my two cents on status effects. What next?", mod: "none", color: "white", emo: "neutral"}
+  ],
+  [
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
+    {name: "Status Effects", desc: "Explain to me how status effects work again, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+  ],
+  function(){
+    // Game-Altering Code Goes here
+  }
+) // Explaining Status Effects
+/*
+creategamestate(
+  [
+    {char: "developer", text: "You aren't supposed to be reading this.", mod: "none", color: "white", emo: "surprised"},
+  ],
+  [
+    {name: "Choice 1 (Required)", desc: "", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Choice 2 (Optional)", desc: "", col: "white", butcol: "green", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Choice 3 (Optional)", desc: "", col: "white", butcol: "green", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Choice 4 (Optional)", desc: "", col: "white", butcol: "green", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
   ],
   function(){
     // Game-Altering Code Goes here
   }
 )
+*/

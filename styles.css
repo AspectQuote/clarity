@@ -196,6 +196,33 @@
   transform: translateY(4px);
 }
 
+.graybutton {
+  padding-top: 5px;
+  padding-bottom: 8px;
+  background: #4d4d4d;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #363636;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 35px;
+  padding-left: 35px;
+}
+.graybutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px);
+  box-shadow: 0px 3px 0px #363636;
+}
+.graybutton:active {
+  box-shadow: 0px 1px 0px #363636;
+  transform: translateY(4px);
+}
+
+
 @keyframes wavy {
   0%, 100% {
     transform: translateY(4px);
