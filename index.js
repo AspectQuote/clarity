@@ -114,7 +114,7 @@ function loadpage(page) {
             </div>
           </div>
           <div style='height: 10%; background: rgba(0,0,0,0.2); position: relative;'>
-            <div style='height: 90%; width: 90%; background: rgba(0,0,0,0.3); border-radius: 15px; position: absolute; top: 5%; left: 5%;' id='statuseffectcontainer'></div>
+            <div style='height: 70%; width: 90%; background: rgba(0,0,0,0.3); border-radius: 15px; position: absolute; bottom: 5%; left: 5%;' id='statuseffectcontainer'></div>
             <div style='top: 0; left: 0; position: absolute; font-size: 11px; margin: 4px;'>Status Effects</div>
           </div>
           <div style='height: 45%;'>
@@ -164,14 +164,14 @@ function loadpage(page) {
               <div style='height: 100%; width: 100%; position: relative; display: inline-block;'>
                 <div style='width: 95%; height: 90%; margin-right: 2.5%; margin-left: 2.5%; background: rgba(0,0,0,0.4); border-radius: 14px;'>
                   <div style='width: 20%; height: 100%; display: inline-block; float: left;'>
-                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px;' id='dialogueportrait'></div>
+                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px; image-rendering: pixelated;' id='dialogueportrait'></div>
                   </div>
                   <div style='width: 75%; height: 100%; display: inline-block; float: left; font-size: 19px;'>
                     <div style='height: 25%; width: 100%; font-size: 30px; overflow: hidden; padding-left: 10px;' id='dialoguename'>Name</div>
                     <div id='dialoguebox' style='height: 65%; overflow-y: scroll; overflow-x: hidden; font-size: inherit;'></div>
                   </div>
                 </div>
-                <div style='position: absolute; bottom: 5px; right: 5px; margin: 10px; padding-right: 10px; padding-left: 10px;' class='graybutton' id='dialoguenextbutton'>Next</div>
+                <div style='position: absolute; bottom: 5px; right: 5px; margin: 10px; padding-right: 10px; padding-left: 10px;' class='nextbutton' id='dialoguenextbutton'>Next</div>
               </div>
             </div>
           </div>
@@ -267,7 +267,7 @@ function loadpage(page) {
         $("#confirmbeginstoryoverlay").fadeIn(250)
         $("#confirmstartchapter").unbind()
         $("#confirmstartchapter").click(function(){
-          savegame = {inventory: [], gamestate: 0, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
+          savegame = {inventory: [0], gamestate: 0, statuseffects: [1], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
           savethegame()
           loadpage("continue")
         })
@@ -436,6 +436,20 @@ function updategameplaystats(){
   $("#claritybarcontainer").unbind()
   createtooltip("#claritybarcontainer", savegame.stats.clar+"/50 Clarity", "#094e70", "", "white")
 
+  $("#inventorycontainer").html('')
+  for (var i = 0; i < savegame.inventory.length; i++) {
+    $("#inventorycontainer").append("<div class='inventoryslot' id='inventoryslot"+i+"'><img style='height: 100%; width: 100%;' src='"+items[savegame.inventory[i]].icon+"'/></div>")
+    $("#inventoryslot"+i).unbind()
+    createtooltip("#inventoryslot"+i, items[savegame.inventory[i]].name, items[savegame.inventory[i]].color, items[savegame.inventory[i]].desc, "white")
+  }
+
+  $("#statuseffectcontainer").html('')
+  for (var i = 0; i < savegame.statuseffects.length; i++) {
+    $("#statuseffectcontainer").append("<div class='statusslot' id='effectslot"+i+"'><img style='height: 100%; width: 100%;' src='"+effects[savegame.statuseffects[i]].icon+"'/></div>")
+    $("#effectslot"+i).unbind()
+    createtooltip("#effectslot"+i, effects[savegame.statuseffects[i]].name, ((effects[savegame.statuseffects[i]].positive) ? "red" : "white"), effects[savegame.statuseffects[i]].desc, "white")
+  }
+
   $("#gameplaystatint").html(savegame.stats.int)
   $("#gameplaystatint").unbind()
   createtooltip("#gameplaystatint", "Intellect", "white", "The Quantification of your intelligence, common sense, and mental fortitude.", "white")
@@ -455,7 +469,6 @@ function updategameplaystats(){
   $("#gameplaystatkar").unbind()
   createtooltip("#gameplaystatkar", "Karma", "white", "A mysterious force that decides how you are treated by some people.", "white")
 }
-
 // EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
 // EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
 // EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
@@ -472,14 +485,21 @@ createending("Ballistika", 1, false, "Good Ending", "good")
 createending("Ballistika", 1, false, "Cover Yourself in Oil", "bad")
 
 items = []
-function createitem(name, icon, rarity, description){items.push({name: name, icon: icon, rarity: rarity, desc: description})}
+function createitem(name, icon, color, description){items.push({name: name, icon: icon, color: color, desc: description})}
+createitem("Leek", "ItemIcons/Leek.png", "#689f38", "A Classic Green Onion. This is the holy tutorial leek, and Aspect's favorite food (Don't let him have it). ALL HAIL LEEKSPIN.")
+
+effects = []
+function createstatuseffect(name, icon, desc, positive){effects.push({name: name, icon: icon, desc: desc, positive: positive})}
+createstatuseffect("Tipsy", "EffectIcons/Tipsy.png", "You had a little to drink and now you have some alcohol in your system.", false)
+createstatuseffect("Educated", "EffectIcons/Educated.png", "You started the tutorial and are learning useful and cool things!", false)
 
 characters = {
   developer: {
     name: "Narrator",
-    icon: "CharacterFaces/GenericMan.png"
+    icon: "CharacterFaces/Narrator.png"
   }
 }
+
 function animatespeech(target, text, emo, slow) {
   var textloopnum = 0
   $("#dialoguenextbutton").fadeOut(250)
@@ -496,88 +516,44 @@ function animatespeech(target, text, emo, slow) {
       if (gamestates[currentstate].dialogue[spp+1] == undefined) {
         $("#dialoguenextbutton").fadeOut(250)
         $("#dialoguenextbutton").unbind()
-        $("#choicebuttoncontainer1").fadeIn(1000)
-        $("#choicebutton1").html(gamestates[currentstate].choices[0].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[0].desc+"</span>")
-        $("#choicebutton1").attr('class', gamestates[currentstate].choices[0].butcol+"button")
-        $("#choicebutton1").css('color', gamestates[currentstate].choices[0].col)
-        $("#choicebutton1").unbind()
-        $("#choicebutton1").click(function(){
-          if (gamestates[currentstate].choices[0].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[0].condition[0]] >= gamestates[currentstate].choices[0].condition[1]) {
-            spp = 0
-            savethegame()
-            loadgamestate(gamestates[currentstate].choices[0].state)
-          } else {
-            console.log("Prevented Successfully!")
-          }
-        })
-        if (gamestates[currentstate].choices[0].condition[0] != "none") {
-          createtooltip("#choicebutton1", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[0].condition[0]] >= gamestates[currentstate].choices[0].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[0].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[0].condition[1]+".", "white")
+        for (var i = 0; i < gamestates[currentstate].choices.length; i++) {
+          console.log("created button for #"+i)
+          $("#choicebutton"+(i+1)).html(gamestates[currentstate].choices[i].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[i].desc+"</span>")
+          $("#choicebutton"+(i+1)).attr('class', gamestates[currentstate].choices[i].butcol+"button")
+          $("#choicebutton"+(i+1)).css('color', gamestates[currentstate].choices[i].col)
+          $("#choicebutton"+(i+1)).unbind()
+          createchoicebutton(i)
         }
-        if (gamestates[currentstate].choices[1] != undefined) {
-          $("#choicebuttoncontainer2").fadeIn(1000)
-          $("#choicebutton2").html(gamestates[currentstate].choices[1].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[1].desc+"</span>")
-          $("#choicebutton2").attr('class', gamestates[currentstate].choices[1].butcol+"button")
-          $("#choicebutton2").css('color', gamestates[currentstate].choices[1].col)
-          $("#choicebutton2").unbind()
-          $("#choicebutton2").click(function(){
-            if (gamestates[currentstate].choices[1].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[1].condition[0]] >= gamestates[currentstate].choices[1].condition[1]) {
-              spp = 0
-              savethegame()
-              loadgamestate(gamestates[currentstate].choices[1].state)
-            } else {
-              console.log("Prevented Successfully!")
-            }
-          })
-          if (gamestates[currentstate].choices[1].condition[0] != "none") {
-            createtooltip("#choicebutton2", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[1].condition[0]] >= gamestates[currentstate].choices[1].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[1].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[1].condition[1]+".", "white")
-          }
-        } else {
-          $("#choicebuttoncontainer2").hide()
-          $("#choicebuttoncontainer2").unbind()
-        }
-        if (gamestates[currentstate].choices[2] != undefined) {
-          $("#choicebuttoncontainer3").fadeIn(1000)
-          $("#choicebutton3").html(gamestates[currentstate].choices[2].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[2].desc+"</span>")
-          $("#choicebutton3").attr('class', gamestates[currentstate].choices[2].butcol+"button")
-          $("#choicebutton3").css('color', gamestates[currentstate].choices[2].col)
-          $("#choicebutton3").unbind()
-          $("#choicebutton3").click(function(){
-            if (gamestates[currentstate].choices[2].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[2].condition[0]] >= gamestates[currentstate].choices[2].condition[1]) {
-              spp = 0
-              savethegame()
-              loadgamestate(gamestates[currentstate].choices[2].state)
-            } else {
-              console.log("Prevented Successfully!")
-            }
-          })
-          if (gamestates[currentstate].choices[2].condition[0] != "none") {
-            createtooltip("#choicebutton3", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[2].condition[0]] >= gamestates[currentstate].choices[2].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[2].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[2].condition[1]+".", "white")
-          }
-        } else {
-          $("#choicebuttoncontainer3").hide()
-          $("#choicebuttoncontainer3").unbind()
-        }
-        if (gamestates[currentstate].choices[3] != undefined) {
-          $("#choicebuttoncontainer4").fadeIn(1000)
-          $("#choicebutton4").html(gamestates[currentstate].choices[3].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[3].desc+"</span>")
-          $("#choicebutton4").attr('class', gamestates[currentstate].choices[3].butcol+"button")
-          $("#choicebutton4").css('color', gamestates[currentstate].choices[3].col)
-          $("#choicebutton4").unbind()
-          $("#choicebutton4").click(function(){
-            if (gamestates[currentstate].choices[3].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[3].condition[0]] >= gamestates[currentstate].choices[3].condition[1]) {
-              spp = 0
-              savethegame()
-              loadgamestate(gamestates[currentstate].choices[3].state)
-            } else {
-              console.log("Prevented Successfully!")
-            }
-          })
-          if (gamestates[currentstate].choices[3].condition[0] != "none") {
-            createtooltip("#choicebutton4", "Condition: ", ((savegame.stats[gamestates[currentstate].choices[3].condition[0]] >= gamestates[currentstate].choices[3].condition[1]) ? "green" : "red"), "Requires your "+gamestates[currentstate].choices[3].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[3].condition[1]+".", "white")
-          }
-        } else {
-          $("#choicebuttoncontainer4").hide()
-          $("#choicebuttoncontainer4").unbind()
+        switch (gamestates[currentstate].choices.length) {
+          case 1:
+            $("#choicebuttoncontainer1").fadeIn(1000)
+            $("#choicebuttoncontainer2").hide()
+            $("#choicebuttoncontainer3").hide()
+            $("#choicebuttoncontainer4").hide()
+            break;
+          case 2:
+            $("#choicebuttoncontainer1").fadeIn(1000)
+            $("#choicebuttoncontainer2").fadeIn(1000)
+            $("#choicebuttoncontainer3").hide()
+            $("#choicebuttoncontainer4").hide()
+            break;
+          case 3:
+            $("#choicebuttoncontainer1").fadeIn(1000)
+            $("#choicebuttoncontainer2").fadeIn(1000)
+            $("#choicebuttoncontainer3").fadeIn(1000)
+            $("#choicebuttoncontainer4").hide()
+            break;
+          case 4:
+            $("#choicebuttoncontainer1").fadeIn(1000)
+            $("#choicebuttoncontainer2").fadeIn(1000)
+            $("#choicebuttoncontainer3").fadeIn(1000)
+            $("#choicebuttoncontainer4").fadeIn(1000)
+            break;
+          default:
+            $("#choicebuttoncontainer1").fadeIn(1000)
+            $("#choicebuttoncontainer2").hide()
+            $("#choicebuttoncontainer3").hide()
+            $("#choicebuttoncontainer4").hide()
         }
       } else {
         $("#dialoguenextbutton").fadeIn(250)
@@ -589,6 +565,37 @@ function animatespeech(target, text, emo, slow) {
       })
     }
   }, (speechspeed*15*((slow != false && slow != undefined) ? 2 : 1))*2)
+}
+function createchoicebutton(i){
+  $("#choicebutton"+(i+1)).click(function(){
+    if (gamestates[currentstate].choices[i].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[i].condition[0]] >= gamestates[currentstate].choices[i].condition[1]) {
+      if (gamestates[currentstate].choices[i].effectcond === false || savegame.statuseffects.includes(gamestates[currentstate].choices[i].effectcond) == true) {
+        if (gamestates[currentstate].choices[i].itemcond === false || savegame.inventory.includes(gamestates[currentstate].choices[i].itemcond) == true) {
+          spp = 0
+          savethegame()
+          loadgamestate(gamestates[currentstate].choices[i].state)
+          gamestates[currentstate].func()
+          updategameplaystats()
+        } else {
+          console.log("Prevented Successfully! (Item Condition)")
+        }
+      } else {
+        console.log("Prevented Successfully! (Effect Condition)")
+      }
+    } else {
+      console.log("Prevented Successfully! (Stat Condition)")
+    }
+  })
+  if (gamestates[currentstate].choices[i].condition[0] != "none" || gamestates[currentstate].choices[i].effectcond !== false || gamestates[currentstate].choices[i].itemcond !== false) {
+    console.log("creating condition tooltip. "+(i+1))
+    createtooltip(
+      "#choicebutton"+(i+1),
+      "Condition: ",
+      (((gamestates[currentstate].choices[i].effectcond === false || savegame.statuseffects.includes(gamestates[currentstate].choices[i].effectcond) == true) && (gamestates[currentstate].choices[i].itemcond === false || savegame.inventory.includes(gamestates[currentstate].choices[i].itemcond) == true) && (gamestates[currentstate].choices[i].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[i].condition[0]] >= gamestates[currentstate].choices[i].condition[1])) ? "green" : "red"),
+      (((gamestates[currentstate].choices[i].condition[0] !== "none") ? "- Requires your "+gamestates[currentstate].choices[i].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[i].condition[1]+"." : "") + ((gamestates[currentstate].choices[i].condition[0] != "none" && gamestates[currentstate].choices[i].effectcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].effectcond !== false) ? "- Requires your to have the status effect '"+effects[gamestates[currentstate].choices[i].effectcond].name+"'." : "EFFECT") + ((gamestates[currentstate].choices[i].effectcond !== false && gamestates[currentstate].choices[i].itemcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].itemcond !== false) ? "- Requires you to have the item '"+items[gamestates[currentstate].choices[i].itemcond].name+"'." : "ITEM")),
+      "white"
+    )
+  }
 }
 
 window.onload = init;
@@ -629,7 +636,10 @@ emotemap = {
   contemplative: [[-600,-300], [-750,-300]],
   evil: [[-900,-300], [-1050,-300]],
 
-  disgusted: [[0,-450], [-150,-450]]
+  disgusted: [[0,-450], [-150,-450]],
+  crying: [[-300,-450], [-450,-450]],
+  angry: [[-600,-450], [-750,-450]],
+  drunk: [[-900,-450], [-1050,-450]]
 }
 function loadgamestate(state){
   if (gamestates[state] != undefined && gamestates[state] != null) {
@@ -664,10 +674,10 @@ creategamestate(
     {char: "developer", text: "This tutorial will teach you the basics of how to play Clarity. What would you like to learn about?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
-    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
   ],
   function(){
     // Game-Altering Code Goes here
@@ -679,16 +689,18 @@ creategamestate(
     {char: "developer", text: "Your items are displayed at the top right of your screen, and you have no maximum inventory slot limit.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "When you hover your cursor over an item, you will get to see that item's tooltip.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "The tooltip will show you all sorts of information like the item's rarity, name and description.", mod: "none", color: "white", emo: "happy"},
-    {char: "developer", text: "Speaking of which, rarity in Clarity works very simply.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Put your cursor over the leek in your inventory, and you will see it's tooltip!", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Speaking of which, rarity in Clarity is also very simple.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "The warmer and more saturated the color of the item's name is, the rarer it is. To contrast, the less saturated and cooler the color is, the more common it is.", mod: "none", color: "white", emo: "happy"},
-    {char: "developer", text: "For example, an item with a bright red name is very rare, but an item with a white name is very common.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "For example, an item with a bright red name is very rare, but an item with a white name is very common. The Leek in your inventory has a cooler color so it is a more common item.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Sometimes the choices you can make are reliant upon whether or not you have an item. If a choice requires you to have an item it will show in it's tooltip.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "Seem simple enough? What would you like me to explain next?", mod: "none", color: "white", emo: "happy"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works again, please.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
-    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works again, please.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
   ],
   function(){
     // Game-Altering Code Goes here
@@ -699,16 +711,17 @@ creategamestate(
     {char: "developer", text: "Status effects in Clarity are a very odd mechanic.", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "When you become afflicted with a status effect, it will show on the left of your screen, just beneath the inventory.", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "Hovering your cursor over the effect will display a tooltip with information about the effect.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Hover over the graduation cap effect on the left. You will see that it's name is 'Educated', and you got it for starting the tutorial.", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "Status effects can have a multitude of effects on you.", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "Some can drain your health, make your party members dislike you, or even lock you out of certain choices!", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "Status effects can wear off, but some stick with you forever or can just be cured.", mod: "none", color: "white", emo: "neutral"},
     {char: "developer", text: "That's my two cents on status effects. What next?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0]},
-    {name: "Status Effects", desc: "Explain to me how status effects work again, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0]},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0]},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0]}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects work again, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
+    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
   ],
   function(){
     // Game-Altering Code Goes here

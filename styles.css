@@ -222,6 +222,33 @@
   transform: translateY(4px);
 }
 
+.nextbutton {
+  padding-top: 5px;
+  padding-bottom: 8px;
+  background: #4d4d4d;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: .1s;
+  border-radius: 4px;
+  box-shadow: 0px 5px 0px #363636;
+  text-shadow: 0px 0px 4px #3f3f3f;
+  user-select: none;
+  margin-bottom: 10px;
+  padding-right: 35px;
+  padding-left: 35px;
+  transform: rotate(-9deg);
+}
+.nextbutton:hover {
+  filter: brightness(1.2);
+  transform: translateY(2px) rotate(-9deg);
+  box-shadow: 0px 3px 0px #363636;
+}
+.nextbutton:active {
+  box-shadow: 0px 1px 0px #363636;
+  transform: translateY(4px) rotate(-9deg);
+}
+
 
 @keyframes wavy {
   0%, 100% {
@@ -386,4 +413,27 @@
   margin: 1%;
   background: black;
   border-radius: 25px;
+}
+
+.inventoryslot {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: rgba(255,255,255,0.1);
+  image-rendering: pixelated;
+  cursor: pointer;
+}
+.statusslot {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.1);
+  image-rendering: pixelated;
+  cursor: pointer;
 }
