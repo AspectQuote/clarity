@@ -447,7 +447,7 @@
 }
 .statvalue {
   font-size: 50px;
-  margin: 10px;
+  padding: 10px;
   text-align: center;
   color: #d19406;
 }

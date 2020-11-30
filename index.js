@@ -123,7 +123,7 @@ function loadpage(page) {
                 <div style=' float: left; width: 100%; height: 100%; display: inline-block; position: relative;'><div style='width: 95%; margin-left: 1.25%; padding-left: 1.25%; padding-top: 3px; height: 70%; background-color: black; border-radius: 5px;'><div id='claritybar' style='background-color: #3D3DA4; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div><div style='position: absolute; top: -6px; right: 0px; z-index: 1; transform: rotate(12deg);'>Clarity</div></div>
               </div>
             </div>
-            <div style='height: 85%; overflow: hidden; overflow-y: scroll; overflow-x: hidden; text-align: center;'>
+            <div style='height: 65%; overflow: hidden; overflow-y: scroll; overflow-x: hidden; text-align: center;'>
               <div class='statcontainer' id='gameplaystatconcontainer'>
                 <div class='statvalue' id='gameplaystatcon'>0</div>
                 <div class='statname'>CON</div>
@@ -170,6 +170,12 @@ function loadpage(page) {
         </div>
         <div style='width: 85%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.4);'>
           <div style='height: 77%; background: rgba(0,0,0,0.2); position: relative;' id='graphics'>
+            <div style='position: absolute; top: -150px; left: 10px; width: 400px; height: 100px; transition: 2s;' id='achievementdisplaycontainer'>
+              <div style='background: rgba(0,0,0,0.3); border-radius: 10px; height: 100%;'>
+                <div style='font-size: 25px; padding-left: 10px; height: 30%;' id='achievementheader'>Header</div>
+                <div style='height: 70%; font-size: 14px; padding-left: 15px; width: 385px;' id='achievementdesc'>Description</div>
+              </div>
+            </div>
             <div style='position: absolute; bottom: 0; left: 0; display: inline-block; width: 100%; height: 200px;'>
               <div style='height: 100%; width: 100%; position: relative; display: inline-block;'>
                 <div style='width: 95%; height: 90%; margin-right: 2.5%; margin-left: 2.5%; background: rgba(0,0,0,0.4); border-radius: 14px;'>
@@ -494,6 +500,20 @@ function updategameplaystats(){
 
 achievements = []
 function createachievement(name, desc, icon){achievements.push({name: name, desc: desc, icon: icon})}
+function triggerachievement(id){
+  if (completion.achievements.includes(id) == false) {
+    completion.achievements.push(id)
+    savethegame()
+    $("#achievementheader").html(achievements[id].name)
+    $("#achievementdesc").html("You got an achievement! "+achievements[id].desc)
+    $("#achievementdisplaycontainer").css("top", "10px")
+    setTimeout(function(){
+      $("#achievementdisplaycontainer").css("top", "-150px")
+    }, 5000)
+  } else {
+    console.log("Prevented Achievement Trigger. ID: "+id)
+  }
+}
 createachievement("Test Achievement", "An Achievement for achievement testing!", "Icons/questionmark.png")
 
 books = {}
@@ -697,7 +717,7 @@ function creategamestate(dialogue, choices, func) {
     func: func
   })
 }
-// Tutorial GAMESTATES (States 1-)
+// Tutorial GAMESTATES (States 1-5)
 creategamestate(
   [
     {char: "developer", text: "Welcome to Clarity! I am so glad you decided to learn how to play the game!", mod: "none", color: "white", emo: "happy"},
