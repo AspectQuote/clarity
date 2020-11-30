@@ -716,7 +716,7 @@ creategamestate(
 creategamestate(
   [
     {char: "developer", text: "The inventory system in clarity is very simple.", mod: "none", color: "white", emo: "selfassured"},
-    {char: "developer", text: "Your items are displayed at the top right of your screen, and you have no maximum inventory slot limit.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Your items are displayed at the top left of your screen, and you have no maximum inventory slot limit.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "When you hover your cursor over an item, you will get to see that item's tooltip.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "The tooltip will show you all sorts of information like the item's rarity, name and description.", mod: "none", color: "white", emo: "happy"},
     {char: "developer", text: "Put your cursor over the leek in your inventory, and you will see it's tooltip!", mod: "none", color: "white", emo: "happy"},
