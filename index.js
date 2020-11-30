@@ -24,12 +24,13 @@ function createdialoguetext(content, target, bold, italic, slow, spaced, modifie
   }, speechspeed*15*((slow != false && slow != undefined) ? 2 : 1))
 }
 
-if (localStorage.getItem('savegame') == null) {
-  localStorage.setItem('savegame', JSON.stringify({inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 0, clar: 0, int: 0, str: 0, spd: 0, con: 0, cle: 0, karma: 0}, standing: {}, party: {}}))
+if (localStorage.getItem('savegame') == null || JSON.parse(localStorage.getItem('savegame')).gamestate === false) {
+  localStorage.setItem('savegame', JSON.stringify({inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 0, clar: 0, int: 0, str: 0, spd: 0, con: 0, cle: 0, karma: 0}, standing: {}, party: []}))
+  localStorage.setItem('completion', JSON.stringify({items: [], endings: [], achievements: [], chaptersunlocked: 0}))
   console.log("First Time Startup Detected. Creating Saves Storage Object.")
 }
 if (localStorage.getItem('completion') == null) {
-  localStorage.setItem('completion', JSON.stringify({items: [], endings: [], achievements: [], chaptersunlocked: 1}))
+  localStorage.setItem('completion', JSON.stringify({items: [], endings: [], achievements: [], chaptersunlocked: 0}))
 }
 var completion = JSON.parse(localStorage.getItem('completion'))
 var savegame = JSON.parse(localStorage.getItem('savegame'))
@@ -43,16 +44,12 @@ function createtooltip(target, header, headercolor, content, contentcolor){
   $(target).mouseover(function(){
     $("#tooltipheader").css('color', headercolor)
     $("#tooltipheader").html(header)
-  })
-  $(target).mouseleave(function(){
-    $("#tooltipheader").html('')
-  })
-  $(target).mouseover(function(){
     $("#tooltipcontent").css('color', contentcolor)
     $("#tooltipcontent").html(content)
+    $("#tooltip").show()
   })
   $(target).mouseleave(function(){
-    $("#tooltipcontent").html('')
+    $("#tooltip").hide()
   })
 }
 function loadpage(page) {
@@ -110,53 +107,66 @@ function loadpage(page) {
           <div style='height: 55%;'>
             <div style='height: 7%; overflow: hidden; padding-top: 5%; font-size: 25px; text-align: center;'>Inventory</div>
             <div style='height: 88%;'>
-              <div style='height: 90%; width: 90%; margin: 2.5%; padding: 2.5%; border-radius: 15px; background: rgba(0,0,0,0.7);' id='inventorycontainer'></div>
+              <div style='height: 90%; width: 90%; margin: 2.5%; padding: 2.5%; border-radius: 15px; background: rgba(0,0,0,0.7); text-align: center;' id='inventorycontainer'></div>
             </div>
           </div>
-          <div style='height: 10%; background: rgba(0,0,0,0.2); position: relative;'>
-            <div style='height: 70%; width: 90%; background: rgba(0,0,0,0.3); border-radius: 15px; position: absolute; bottom: 5%; left: 5%;' id='statuseffectcontainer'></div>
-            <div style='top: 0; left: 0; position: absolute; font-size: 11px; margin: 4px;'>Status Effects</div>
+          <div style='height: 8%; background: rgba(0,0,0,0.2); position: relative; margin-bottom: 2%;'>
+            <div style='height: 68px; width: 90%; background: rgba(0,0,0,0.3); border-radius: 15px; position: absolute; top: 5px; left: 5%; display: inline-block;' id='statuseffectcontainer'></div>
+            <div style='top: 5px; left: 2px; position: absolute; font-size: 11px; margin: 4px; transform: rotate(-12deg);'>Status Effects</div>
           </div>
           <div style='height: 45%;'>
             <div style='height: 15%;'>
               <div style='height: 50%; overflow: hidden; cursor: pointer;' id='healthbarcontainer'>
-                <div style='display: inline-block; width: 20%; font-size: 22px; height: 100%; float: left; '>HP</div><div style=' float: left; width: 80%; height: 100%; display: inline-block;'><div style='width: 90%; padding-left: 2.5%; padding-top: 2px; margin-left: 2.5%; height: 20px; margin-top: 5%; background-color: black; border-radius: 5px;'><div id='healthbar' style='background-color: red; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div></div>
+                <div style=' float: left; width: 100%; height: 100%; display: inline-block; position: relative;'><div style='width: 95%; margin-left: 1.25%; padding-left: 1.25%; padding-top: 3px; height: 70%; background-color: black; border-radius: 5px;'><div id='healthbar' style='background-color: #871C27; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div><div style='position: absolute; top: -3px; right: 0px; z-index: 1; transform: rotate(12deg);'>HP</div></div>
               </div>
-              <div style='height: 50%; overflow: hidden; cursor: pointer;' id='claritybarcontainer'>
-                <div style='display: inline-block; width: 40%; font-size: 22px; height: 100%; float: left; '>Clarity</div><div style=' float: left; width: 60%; height: 100%; display: inline-block;'><div style='width: 90%; padding-left: 2.5%; padding-top: 2px; margin-left: 2.5%; height: 20px; margin-top: 5%; background-color: black; border-radius: 5px;'><div id='claritybar' style='background-color: #094e70; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div></div>
+              <div style='height: 50%; cursor: pointer;' id='claritybarcontainer'>
+                <div style=' float: left; width: 100%; height: 100%; display: inline-block; position: relative;'><div style='width: 95%; margin-left: 1.25%; padding-left: 1.25%; padding-top: 3px; height: 70%; background-color: black; border-radius: 5px;'><div id='claritybar' style='background-color: #3D3DA4; height: 90%; border-radius: 5px; transition: 1s; width: 0%;'></div></div><div style='position: absolute; top: -6px; right: 0px; z-index: 1; transform: rotate(12deg);'>Clarity</div></div>
               </div>
             </div>
-            <div style='height: 85%; overflow: hidden;'>
-              <div style='float: left; display: inline-block; width: 50%; height: 100%;'>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/IntellectIcon.png' /> INT</div>
-                  <div class='gameplaystatvalue' id='gameplaystatint'></div>
-                </div>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/StrengthIcon.png' /> STR</div>
-                  <div class='gameplaystatvalue' id='gameplaystatstr'></div>
-                </div>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/SpeedIcon.png' /> SPD</div>
-                  <div class='gameplaystatvalue' id='gameplaystatspd'></div>
-                </div>
+            <div style='height: 85%; overflow: hidden; overflow-y: scroll; overflow-x: hidden; text-align: center;'>
+              <div class='statcontainer' id='gameplaystatconcontainer'>
+                <div class='statvalue' id='gameplaystatcon'>0</div>
+                <div class='statname'>CON</div>
+                <div class='staticon'><img src='Icons/ConstitutionIcon.png' style='height: 100%; width: 100%;' /></div>
               </div>
-              <div style='float: left; display: inline-block; width: 50%; height: 100%;'>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/ConstitutionIcon.png' /> CON</div>
-                  <div class='gameplaystatvalue' id='gameplaystatcon'></div>
-                </div>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/ClevernessIcon.png' /> CLE</div>
-                  <div class='gameplaystatvalue' id='gameplaystatcle'></div>
-                </div>
-                <div class='gameplaystatcontainer'>
-                  <div class='gameplaystatheader'><img style='height: 100%; image-rendering: pixelated;' src='Icons/CharismaIcon.png' /> KAR</div>
-                  <div class='gameplaystatvalue' id='gameplaystatkar'></div>
-                </div>
+              <div class='statcontainer' id='gameplaystatstrcontainer'>
+                <div class='statvalue' id='gameplaystatstr'>0</div>
+                <div class='statname'>STR</div>
+                <div class='staticon'><img src='Icons/StrengthIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatspdcontainer'>
+                <div class='statvalue' id='gameplaystatspd'>0</div>
+                <div class='statname'>SPD</div>
+                <div class='staticon'><img src='Icons/SpeedIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatintcontainer'>
+                <div class='statvalue' id='gameplaystatint'>0</div>
+                <div class='statname'>INT</div>
+                <div class='staticon'><img src='Icons/IntellectIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatkarcontainer'>
+                <div class='statvalue' id='gameplaystatkar'>0</div>
+                <div class='statname'>KAR</div>
+                <div class='staticon'><img src='Icons/KarmaIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatclecontainer'>
+                <div class='statvalue' id='gameplaystatcle'>0</div>
+                <div class='statname'>CLE</div>
+                <div class='staticon'><img src='Icons/ClevernessIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatchacontainer'>
+                <div class='statvalue' id='gameplaystatcha'>0</div>
+                <div class='statname'>CHA</div>
+                <div class='staticon'><img src='Icons/CharismaIcon.png' style='height: 100%; width: 100%;' /></div>
+              </div>
+              <div class='statcontainer' id='gameplaystatluccontainer'>
+                <div class='statvalue' id='gameplaystatluc'>0</div>
+                <div class='statname'>LUC</div>
+                <div class='staticon'><img src='Icons/LuckIcon.png' style='height: 100%; width: 100%;' /></div>
               </div>
             </div>
           </div>
+        </div>
         </div>
         <div style='width: 85%; height: 100%; float: left; display: inline-block; background: rgba(0,0,0,0.4);'>
           <div style='height: 77%; background: rgba(0,0,0,0.2); position: relative;' id='graphics'>
@@ -164,7 +174,7 @@ function loadpage(page) {
               <div style='height: 100%; width: 100%; position: relative; display: inline-block;'>
                 <div style='width: 95%; height: 90%; margin-right: 2.5%; margin-left: 2.5%; background: rgba(0,0,0,0.4); border-radius: 14px;'>
                   <div style='width: 20%; height: 100%; display: inline-block; float: left;'>
-                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px; image-rendering: pixelated;' id='dialogueportrait'></div>
+                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px;' id='dialogueportrait'></div>
                   </div>
                   <div style='width: 75%; height: 100%; display: inline-block; float: left; font-size: 19px;'>
                     <div style='height: 25%; width: 100%; font-size: 30px; overflow: hidden; padding-left: 10px;' id='dialoguename'>Name</div>
@@ -213,29 +223,7 @@ function loadpage(page) {
     case "newgame":
       $("#content").html(`
         <div style='font-size: 60px; height: 20%; padding-top: 5%; padding-left: 50px;'>Chapter Select</div>
-        <div style='height: 75%; overflow-y: scroll; overflow-x: hidden;'>
-          <div class='storyheader'>Book 1: Ballistika</div>
-          <div class='chapterselectcontainer' id='selectchapter1'>
-            <div class='chapterselectheader'>Chapter 1: Birth</div>
-            <div class='chapterselectcontent' id='chapterdesc1'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
-          </div>
-          <div class='chapterselectcontainer' id='selectchapter2'>
-            <div class='chapterselectheader'>Chapter 2: Mother</div>
-            <div class='chapterselectcontent' id='chapterdesc2'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
-          </div>
-          <div class='chapterselectcontainer' id='selectchapter3'>
-            <div class='chapterselectheader'>Chapter 3: Gladiator</div>
-            <div class='chapterselectcontent' id='chapterdesc3'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
-          </div>
-          <div class='chapterselectcontainer' id='selectchapter4'>
-            <div class='chapterselectheader'>Chapter 4: The Mirror</div>
-            <div class='chapterselectcontent' id='chapterdesc4'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
-          </div>
-          <div class='chapterselectcontainer' id='selectchapter5'>
-            <div class='chapterselectheader'>Chapter 5: Death</div>
-            <div class='chapterselectcontent' id='chapterdesc5'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</div>
-          </div>
-        </div>
+        <div style='height: 75%; overflow-y: scroll; overflow-x: hidden;' id='chapterselectcontainer'></div>
         <div style='position: absolute; top: 0; left: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='redbutton' id='backbutton'>Back</div>
         <div style='position: absolute; top: 0; right: 0; padding-left: 15px; padding-right: 15px; margin: 20px;' class='purplebutton' id='tutorialbutton'>Tutorial</div>
         <div id='confirmbeginstoryoverlay' style='position: absolute; top: 0; left: 0; height: 100%; width: 100%; background: rgba(0,0,0,0.9);'>
@@ -261,13 +249,33 @@ function loadpage(page) {
         $("#tooltipcontent").text('')
       })
       $("#confirmbeginstoryoverlay").hide()
+      var chapteriter = 1
+      for (var i = 0; i < Object.keys(books).length; i++) {
+        $("#chapterselectcontainer").append(`<div class='storyheader'>Book `+(i+1)+`: `+Object.keys(books)[i]+`</div>`)
+        for (var z = 0; z < Object.keys(books[Object.keys(books)].chapters).length; z++) {
+          $("#chapterselectcontainer").append(`
+          <div class='chapterselectcontainer' id='selectchapter`+i+``+z+`'>
+          `+((completion.chaptersunlocked >= chapteriter) ?
+            `<div class='chapterselectheader'>Chapter `+(z+1)+`: `+Object.keys(books[Object.keys(books)].chapters)[z]+`</div><div class='chapterselectcontent' id='chapterdesc`+i+``+z+`'>`+books[Object.keys(books)[i]].chapters[Object.keys(books[Object.keys(books)[i]].chapters)[z]].desc+`</div>` :
+            `<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>`)+`
+          </div>
+          `)
+          if (completion.chaptersunlocked >= chapteriter) {
+            createclickablechapter(i, z, Object.keys(books)[i], Object.keys(books[Object.keys(books)].chapters)[z])
+          } else {
+            createtooltip(`#selectchapter`+i+``+z, "Chapter Locked.", "red", "You must complete the canonical ending for the previous chapter in order to play through this one.", "white")
+          }
+          chapteriter++
+        }
+      }
 
       $("#tutorialbutton").click(function(){
         $("#startchapterflavor").html("Begin the Clarity TUTORIAL?")
         $("#confirmbeginstoryoverlay").fadeIn(250)
         $("#confirmstartchapter").unbind()
         $("#confirmstartchapter").click(function(){
-          savegame = {inventory: [0], gamestate: 0, statuseffects: [1], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0}, standing: {}, party: {}}
+          savegame = {inventory: [0], gamestate: 0, statuseffects: [1], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []}
+          currentstate = savegame.gamestate
           savethegame()
           loadpage("continue")
         })
@@ -278,30 +286,9 @@ function loadpage(page) {
         $("#confirmbeginstoryoverlay").fadeIn(250)
       })
       createtooltip("#cancelstartchapter", "Cancel", "white", "I like what I have going on right now, so please don't overwrite my save data!", "white")
-      if (completion.chaptersunlocked >= 2) {
 
-      } else {
-        $("#selectchapter2").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
-        $("#chapterdesc2").html("")
-      }
-      if (completion.chaptersunlocked >= 3) {
-
-      } else {
-        $("#selectchapter3").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
-        $("#chapterdesc3").html("")
-      }
-      if (completion.chaptersunlocked >= 4) {
-
-      } else {
-        $("#selectchapter4").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
-        $("#chapterdesc4").html("")
-      }
-      if (completion.chaptersunlocked >= 5) {
-
-      } else {
-        $("#selectchapter5").append("<div class='lockedchaptercontainer'><div style='position: relative; height: 100%; width: 100%; color: inherit; font-size: inherit;'><div class='centerme'>LOCKED<img src='Icons/padlock.png' style='height: 30px;' /></div></div></div>")
-        $("#chapterdesc5").html("")
-      }
+      $("#selectchapter5").append("")
+      $("#chapterdesc5").html("")
       break;
     case "achievements":
         $("#content").html(`
@@ -393,12 +380,22 @@ function loadpage(page) {
           <div style='display: inline-block; text-align: center; padding-top: 4%;'>
             <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/4c/4c1bb9ff14a1bbbe0a97eb3d067484ca9657677a_full.jpg' />
             <div style='font-size: 16px; text-align: center; width: 100%;' id='AspectName'></div>
-            <div style='font-size: 12px; text-align: center; width: 100%;'>Super Coder Man</div>
+            <div style='font-size: 12px; text-align: center; width: 100%;'>Developer</div>
           </div>
           <div style='display: inline-block; text-align: center; margin-left: 20px;'>
             <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='Icons/garaxsheepfp.png' />
             <div style='font-size: 16px; text-align: center; width: 100%;' id='GaraxName'></div>
-            <div style='font-size: 12px; text-align: center; width: 100%;'>Super Designer Man</div>
+            <div style='font-size: 12px; text-align: center; width: 100%;'>Designer</div>
+          </div>
+          <div style='display: inline-block; text-align: center; margin-left: 20px;'>
+            <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='Icons/epitaxiapfp.png' />
+            <div style='font-size: 16px; text-align: center; width: 100%;' id='EpitName'></div>
+            <div style='font-size: 12px; text-align: center; width: 100%;'>Playtester</div>
+          </div>
+          <div style='display: inline-block; text-align: center; margin-left: 20px;'>
+            <img style='height: 120px; width: 120px; border-radius: 50%; border: 2px solid white;' src='Icons/co0biepfp.png' />
+            <div style='font-size: 16px; text-align: center; width: 100%;' id='Co0bName'></div>
+            <div style='font-size: 12px; text-align: center; width: 100%;'>Playtester</div>
           </div>
         </div>
         <div style='position: absolute; bottom: 0; left: 0; background: rgba(0,0,0,0.9); font-size: 15px; padding-left: 10px; padding-top: 10px; padding-bottom: 40px; width: 100%;'>Links
@@ -419,22 +416,38 @@ function loadpage(page) {
       createdialoguetext("About", "#abouttitle", false, false, false, false, "none")
       createdialoguetext("AspectQuote", "#AspectName", false, false, false, false, "shaky")
       createdialoguetext("Garaxshee", "#GaraxName", false, false, false, false, "wavy")
+      createdialoguetext("Co0bie", "#Co0bName", false, false, false, false, "wavy")
+      createdialoguetext("Epitaxia", "#EpitName", false, false, false, false, "shaky")
       break;
     default:
       console.log("Unknown Page Attempted to load: "+page)
   }
-  $("#tooltipheader").text('')
-  $("#tooltipcontent").text('')
+  $("#tooltip").hide()
 }
 
+function createclickablechapter(bookid, chapterid, bookname, chaptername) {
+  $("#selectchapter"+bookid+""+chapterid).unbind()
+  $("#selectchapter"+bookid+""+chapterid).click(function(){
+    $("#startchapterflavor").html("Begin Chapter "+(chapterid+1)+" of "+bookname+"?")
+    $("#confirmbeginstoryoverlay").fadeIn(250)
+    $("#confirmstartchapter").unbind()
+    $("#confirmstartchapter").click(function(){
+      savegame = books[bookname].chapters[chaptername].stats
+      currentstate = savegame.gamestate
+      savethegame()
+      loadpage("continue")
+    })
+    createtooltip("#confirmstartchapter", "Confirm", "white", "Start this chapter for me, please!", "white")
+  })
+}
 function updategameplaystats(){
-  $("#healthbar").css("width", (((savegame.stats.hp/savegame.stats.maxhp)*100)-2.5)+"%")
+  $("#healthbar").css("width", (((savegame.stats.hp/savegame.stats.maxhp)*100)-1.25)+"%")
   $("#healthbarcontainer").unbind()
-  createtooltip("#healthbarcontainer", savegame.stats.hp+"/"+savegame.stats.maxhp+" HP", "red", "", "white")
+  createtooltip("#healthbarcontainer", savegame.stats.hp+"/"+savegame.stats.maxhp+" HP", "#871C27", "", "white")
 
-  $("#claritybar").css("width", (((savegame.stats.clar/50)*100)-2.5)+"%")
+  $("#claritybar").css("width", (((savegame.stats.clar/50)*100)-1.25)+"%")
   $("#claritybarcontainer").unbind()
-  createtooltip("#claritybarcontainer", savegame.stats.clar+"/50 Clarity", "#094e70", "", "white")
+  createtooltip("#claritybarcontainer", savegame.stats.clar+"/50 Clarity", "#3D3DA4", "", "white")
 
   $("#inventorycontainer").html('')
   for (var i = 0; i < savegame.inventory.length; i++) {
@@ -451,23 +464,29 @@ function updategameplaystats(){
   }
 
   $("#gameplaystatint").html(savegame.stats.int)
-  $("#gameplaystatint").unbind()
-  createtooltip("#gameplaystatint", "Intellect", "white", "The Quantification of your intelligence, common sense, and mental fortitude.", "white")
+  $("#gameplaystatintcontainer").unbind()
+  createtooltip("#gameplaystatintcontainer", "Intellect", "white", "The Quantification of your intelligence, common sense, and mental fortitude.", "white")
   $("#gameplaystatstr").html(savegame.stats.str)
-  $("#gameplaystatstr").unbind()
-  createtooltip("#gameplaystatstr", "Strength", "white", "A numerical value representing how physically strong you are.", "white")
+  $("#gameplaystatstrcontainer").unbind()
+  createtooltip("#gameplaystatstrcontainer", "Strength", "white", "A numerical value representing how physically strong you are.", "white")
   $("#gameplaystatspd").html(savegame.stats.spd)
-  $("#gameplaystatspd").unbind()
-  createtooltip("#gameplaystatspd", "Speed", "white", "How fast you are, in both reaction time and dexterity.", "white")
+  $("#gameplaystatspdcontainer").unbind()
+  createtooltip("#gameplaystatspdcontainer", "Speed", "white", "How fast you are, in both reaction time and dexterity.", "white")
   $("#gameplaystatcon").html(savegame.stats.con)
-  $("#gameplaystatcon").unbind()
-  createtooltip("#gameplaystatcon", "Constitution", "white", "How <i>tough</i> you are physically. How much physical punishment you can take.", "white")
+  $("#gameplaystatconcontainer").unbind()
+  createtooltip("#gameplaystatconcontainer", "Constitution", "white", "How <i>tough</i> you are physically. How much physical punishment you can take.", "white")
   $("#gameplaystatcle").html(savegame.stats.cle)
-  $("#gameplaystatcle").unbind()
-  createtooltip("#gameplaystatcle", "Cleverness", "white", "Your wit and critical thinking skills.", "white")
+  $("#gameplaystatclecontainer").unbind()
+  createtooltip("#gameplaystatclecontainer", "Cleverness", "white", "Your wit and critical thinking skills.", "white")
   $("#gameplaystatkar").html(savegame.stats.karma)
-  $("#gameplaystatkar").unbind()
-  createtooltip("#gameplaystatkar", "Karma", "white", "A mysterious force that decides how you are treated by some people.", "white")
+  $("#gameplaystatkarcontainer").unbind()
+  createtooltip("#gameplaystatkarcontainer", "Karma", "white", "A mysterious force that decides how you are treated by some people.", "white")
+  $("#gameplaystatluc").html(savegame.stats.luc)
+  $("#gameplaystatluccontainer").unbind()
+  createtooltip("#gameplaystatluccontainer", "Luck", "white", "Some call it the will of fate, your ability to have random things happen.", "white")
+  $("#gameplaystatcha").html(savegame.stats.cha)
+  $("#gameplaystatchacontainer").unbind()
+  createtooltip("#gameplaystatchacontainer", "Charisma", "white", "How much you can influence others with only your words and looks.", "white")
 }
 // EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
 // EVERYTHING BELOW IS CHARACTERS, ITEMS AND ENDINGS. GO NO FURTHER IF YOU DON'T WANT SPOILERS.
@@ -476,6 +495,16 @@ function updategameplaystats(){
 achievements = []
 function createachievement(name, desc, icon){achievements.push({name: name, desc: desc, icon: icon})}
 createachievement("Test Achievement", "An Achievement for achievement testing!", "Icons/questionmark.png")
+
+books = {}
+function createbook(name){books[name] = {chapters: {}}}
+createbook("Ballistika")
+function createchapter(book, name, desc, startingstats){books[book].chapters[name] = {desc: desc, stats: startingstats}}
+createchapter("Ballistika", "Birth", "Lorem Ipsum...", {inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []})
+createchapter("Ballistika", "Mother", "Lorem Ipsum...", {inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []})
+createchapter("Ballistika", "Gladiator", "Lorem Ipsum...", {inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []})
+createchapter("Ballistika", "The Mirror", "Lorem Ipsum...", {inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []})
+createchapter("Ballistika", "Death", "Lorem Ipsum...", {inventory: [], gamestate: false, statuseffects: [], equipment: {armor: 0, hands: 0, back: 0}, stats: {maxhp: 50, hp: 50, clar: 5, int: 5, str: 5, spd: 5, con: 5, cle: 5, karma: 0, luc: 5, cha: 5}, standing: {}, party: []})
 
 endings = []
 function createending(book, chapter, canonical, name, badgood){endings.push({book: book, chapter: chapter, canonical: canonical, name: name, badgood: badgood})}
@@ -561,6 +590,7 @@ function animatespeech(target, text, emo, slow) {
       }
       $("#dialoguenextbutton").click(function(){
         spp++
+        $("#dialoguenextbutton").unbind()
         loadgamestate(currentstate)
       })
     }
@@ -586,13 +616,13 @@ function createchoicebutton(i){
       console.log("Prevented Successfully! (Stat Condition)")
     }
   })
-  if (gamestates[currentstate].choices[i].condition[0] != "none" || gamestates[currentstate].choices[i].effectcond !== false || gamestates[currentstate].choices[i].itemcond !== false) {
+  if (gamestates[currentstate].choices[i].condition[0] != "none" || gamestates[currentstate].choices[i].effectcond !== false || gamestates[currentstate].choices[i].itemcond !== false || gamestates[currentstate].choices[i].partycond !== false) {
     console.log("creating condition tooltip. "+(i+1))
     createtooltip(
       "#choicebutton"+(i+1),
       "Condition: ",
-      (((gamestates[currentstate].choices[i].effectcond === false || savegame.statuseffects.includes(gamestates[currentstate].choices[i].effectcond) == true) && (gamestates[currentstate].choices[i].itemcond === false || savegame.inventory.includes(gamestates[currentstate].choices[i].itemcond) == true) && (gamestates[currentstate].choices[i].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[i].condition[0]] >= gamestates[currentstate].choices[i].condition[1])) ? "green" : "red"),
-      (((gamestates[currentstate].choices[i].condition[0] !== "none") ? "- Requires your "+gamestates[currentstate].choices[i].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[i].condition[1]+"." : "") + ((gamestates[currentstate].choices[i].condition[0] != "none" && gamestates[currentstate].choices[i].effectcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].effectcond !== false) ? "- Requires your to have the status effect '"+effects[gamestates[currentstate].choices[i].effectcond].name+"'." : "EFFECT") + ((gamestates[currentstate].choices[i].effectcond !== false && gamestates[currentstate].choices[i].itemcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].itemcond !== false) ? "- Requires you to have the item '"+items[gamestates[currentstate].choices[i].itemcond].name+"'." : "ITEM")),
+      (((gamestates[currentstate].choices[i].partycond === false || savegame.party.includes(gamestates[currentstate].choices[i].partycond) == true) && (gamestates[currentstate].choices[i].effectcond === false || savegame.statuseffects.includes(gamestates[currentstate].choices[i].effectcond) == true) && (gamestates[currentstate].choices[i].itemcond === false || savegame.inventory.includes(gamestates[currentstate].choices[i].itemcond) == true) && (gamestates[currentstate].choices[i].condition[0] == "none" || savegame.stats[gamestates[currentstate].choices[i].condition[0]] >= gamestates[currentstate].choices[i].condition[1])) ? "green" : "red"),
+      (((gamestates[currentstate].choices[i].condition[0] !== "none") ? "- Requires your "+gamestates[currentstate].choices[i].condition[0].toUpperCase()+" stat be greater than or equal to "+gamestates[currentstate].choices[i].condition[1]+"." : "") + ((gamestates[currentstate].choices[i].condition[0] != "none" && gamestates[currentstate].choices[i].effectcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].effectcond !== false) ? "- Requires your to have the status effect '"+effects[gamestates[currentstate].choices[i].effectcond].name+"'." : "") + ((gamestates[currentstate].choices[i].effectcond !== false && gamestates[currentstate].choices[i].itemcond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].itemcond !== false) ? "- Requires you to have the item '"+items[gamestates[currentstate].choices[i].itemcond].name+"'." : "")) + ((gamestates[currentstate].choices[i].itemcond !== false && gamestates[currentstate].choices[i].partycond !== false) ? "<br />" : "") + ((gamestates[currentstate].choices[i].partycond !== false) ? "- Requires you to have "+gamestates[currentstate].choices[i].partycond+" in your party." : ""),
       "white"
     )
   }
@@ -674,10 +704,10 @@ creategamestate(
     {char: "developer", text: "This tutorial will teach you the basics of how to play Clarity. What would you like to learn about?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Stats", desc: "Explain to me how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
   ],
   function(){
     // Game-Altering Code Goes here
@@ -697,10 +727,10 @@ creategamestate(
     {char: "developer", text: "Seem simple enough? What would you like me to explain next?", mod: "none", color: "white", emo: "happy"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works again, please.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works again, please.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects affect me and my choices.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Stats", desc: "Explain to me how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
   ],
   function(){
     // Game-Altering Code Goes here
@@ -718,28 +748,68 @@ creategamestate(
     {char: "developer", text: "That's my two cents on status effects. What next?", mod: "none", color: "white", emo: "neutral"}
   ],
   [
-    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Status Effects", desc: "Explain to me how status effects work again, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "My Stats", desc: "Explain to my how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects work again, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Stats", desc: "Explain to me how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
   ],
   function(){
     // Game-Altering Code Goes here
   }
 ) // Explaining Status Effects
+creategamestate(
+  [
+    {char: "developer", text: "The Party system in clarity is fairly easy to comprehend.", mod: "none", color: "white", emo: "selfassured"},
+    {char: "developer", text: "Your 'party' in clarity is essentially all the people/characters that are following you.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "Each member of your party will have some dialogue and even open up specific choices.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "However, your party members can leave you or even die if not treated properly.", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "So make sure you treat your party members properly!", mod: "none", color: "white", emo: "neutral"},
+    {char: "developer", text: "What would you like me to explain next?", mod: "none", color: "white", emo: "neutral"}
+  ],
+  [
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects work, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Party", desc: "Explain to me how the party system works again, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Stats", desc: "Explain to me how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
+  ],
+  function(){
+    // Game-Altering Code Goes here
+  }
+) // Explaining the Party System
+creategamestate(
+  [
+    {char: "developer", text: "Your stats in clarity are all numerical quantifications of your aptitudes.", mod: "none", color: "white", emo: "selfassured"},
+    {char: "developer", text: "In layman's terms, each is your abilities on a scale from 1-20.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Having stats helps you have different choices.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Some choices require you to have a high enough stat for them.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "For example, you may not be able to lift a rock if your strength stat isn't high enough; you may just have to go around it.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Your stats are on the bottom left, and if you put your cursor over them, you can see a basic description of the stat with it's tooltip.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "Likewise, some choices will allow you to increase or decrease your stats; though you won't know whether it does or not until you make the choice.", mod: "none", color: "white", emo: "happy"},
+    {char: "developer", text: "...and that's about it for your stats, which next?", mod: "none", color: "white", emo: "happy"}
+  ],
+  [
+    {name: "My Inventory", desc: "Explain to me how the inventory system works, how items work, and what item rarity is.", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Status Effects", desc: "Explain to me how status effects work, please.", col: "white", butcol: "purple", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Party", desc: "Explain to me how the party system works, please.", col: "white", butcol: "orange", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "My Stats", desc: "Explain to me again how my stats affect the game, what they are, and how I can alter them.", col: "white", butcol: "blue", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
+  ],
+  function(){
+    // Game-Altering Code Goes here
+  }
+) // Explaining Character Stats
 /*
 creategamestate(
   [
     {char: "developer", text: "You aren't supposed to be reading this.", mod: "none", color: "white", emo: "surprised"},
   ],
   [
-    {name: "Choice 1 (Required)", desc: "", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Choice 2 (Optional)", desc: "", col: "white", butcol: "green", state: 2, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Choice 3 (Optional)", desc: "", col: "white", butcol: "green", state: 3, condition: ["none", 0], effectcond: false, itemcond: false},
-    {name: "Choice 4 (Optional)", desc: "", col: "white", butcol: "green", state: 4, condition: ["none", 0], effectcond: false, itemcond: false}
+    {name: "Choice 1 (Required)", desc: "", col: "white", butcol: "green", state: 1, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Choice 2 (Optional)", desc: "", col: "white", butcol: "green", state: 2, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Choice 3 (Optional)", desc: "", col: "white", butcol: "green", state: 3, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false},
+    {name: "Choice 4 (Optional)", desc: "", col: "white", butcol: "green", state: 4, condition: ["none", 0], effectcond: false, itemcond: false, partycond: false}
   ],
   function(){
-    // Game-Altering Code Goes here
+    // Game-Altering Code Goes here, code will execute the moment this gamestate comes into effect.
   }
 )
 */
