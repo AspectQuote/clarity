@@ -60,7 +60,7 @@ function loadpage(page) {
           Clarity
           <span id='titlescreenflavor' style='font-size: 16px; letter-spacing: 6px; text-shadow: 0px 1px 0px black, 0px -1px 0px black, 1px 0px 0px black, -1px 0px 0px black;'></span>
         </div>
-        <div style='height: 60%; text-align: center;'>
+        <div style='height: 60%; text-align: center; position: relative;'>
           `+((savegame.gamestate === false) ? `` : `<div class='purplebutton' id='continuebutton' style='display: inline-block; font-size: 25px;'>Continue</div>`)+`<br/>
           <div class='greenbutton' id='newgamebutton' style='display: inline-block; font-size: 25px;'>New Game</div><br/>
           <div class='bluebutton' id='achievementsbutton' style='display: inline-block; font-size: 25px;'>Achievements</div><br/>
@@ -68,6 +68,7 @@ function loadpage(page) {
           <div class='yellowbutton' id='optionsbutton' style='display: inline-block; font-size: 25px;'>Options</div><br/>
           <div class='fuchsiabutton' id='aboutbutton' style='display: inline-block; font-size: 25px;'>About</div>
         </div>
+        <div style='position: absolute; bottom: 0; text-align: right; font-size: 25px; right: 0; width: 100%; color: red;'>`+((resizewarning) ? "A smaller browser window has been detected. Your window has been zoomed accordingly." : "")+`</div>
       `)
       $("#newgamebutton").unbind()
       createtooltip("#newgamebutton", "Create A New Game", "white", "Select a chapter and start a new adventure!", "white")
@@ -179,23 +180,23 @@ function loadpage(page) {
             <div style='position: absolute; bottom: 0; left: 0; display: inline-block; width: 100%; height: 200px;'>
               <div style='height: 100%; width: 100%; position: relative; display: inline-block;'>
                 <div style='width: 95%; height: 90%; margin-right: 2.5%; margin-left: 2.5%; background: rgba(0,0,0,0.4); border-radius: 14px;'>
-                  <div style='width: 20%; height: 100%; display: inline-block; float: left;'>
-                    <div style='height: 150px; width: 150px; display: inline-block; background-size: 1200px; border: 2px solid white; border-radius: 10px; margin: 13px;' id='dialogueportrait'></div>
+                  <div style='width: 15%; height: 100%; display: inline-block; float: left;'>
+                    <div style='height: 300px; width: 300px; position: absolute; left: 0.5%; bottom: 2%; display: inline-block; background-size: 2400px; border-radius: 10px; margin: 13px;' id='dialogueportrait'></div>
                   </div>
-                  <div style='width: 75%; height: 100%; display: inline-block; float: left; font-size: 19px;'>
+                  <div style='width: 85%; height: 100%; display: inline-block; float: left; font-size: 19px;'>
                     <div style='height: 25%; width: 100%; font-size: 30px; overflow: hidden; padding-left: 10px;' id='dialoguename'>Name</div>
                     <div id='dialoguebox' style='height: 65%; overflow-y: scroll; overflow-x: hidden; font-size: inherit;'></div>
                   </div>
                 </div>
-                <div style='position: absolute; bottom: 5px; right: 5px; margin: 10px; padding-right: 10px; padding-left: 10px;' class='nextbutton' id='dialoguenextbutton'>Next</div>
+                <div style='position: absolute; bottom: 5px; right: 5px; margin: 10px; padding-right: 20px; padding-left: 20px; font-size: 25px;' class='nextbutton' id='dialoguenextbutton'>Next</div>
               </div>
             </div>
           </div>
           <div style='height: 23%; background: rgba(0,0,0,0);' id='choicebuttonscontainer'>
-            <div id='choicebuttoncontainer1' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton1'>Choice #1</div></div>
-            <div id='choicebuttoncontainer2' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton2'>Choice #2</div></div>
-            <div id='choicebuttoncontainer3' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton3'>Choice #3</div></div>
-            <div id='choicebuttoncontainer4' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 17px;' id='choicebutton4'>Choice #4</div></div>
+            <div id='choicebuttoncontainer1' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 22px;' id='choicebutton1'>Choice #1</div></div>
+            <div id='choicebuttoncontainer2' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 22px;' id='choicebutton2'>Choice #2</div></div>
+            <div id='choicebuttoncontainer3' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 22px;' id='choicebutton3'>Choice #3</div></div>
+            <div id='choicebuttoncontainer4' style='width: 50%; height: 50%; display: inline-block; float: left; text-align: center;'><div class='orangebutton' style='display: inline-block; margin-top: 10px; font-size: 22px;' id='choicebutton4'>Choice #4</div></div>
           </div>
         </div>
         <div style='position: absolute; top: 0; right: 0; margin: 20px;'>
@@ -571,7 +572,7 @@ function animatespeech(target, text, emo, slow) {
         $("#dialoguenextbutton").unbind()
         for (var i = 0; i < gamestates[currentstate].choices.length; i++) {
           console.log("created button for #"+i)
-          $("#choicebutton"+(i+1)).html(gamestates[currentstate].choices[i].name+"<br /><span style='color: inherit; font-size: 11px;'>"+gamestates[currentstate].choices[i].desc+"</span>")
+          $("#choicebutton"+(i+1)).html(gamestates[currentstate].choices[i].name+"<br /><span style='color: inherit; font-size: 19px;'>"+gamestates[currentstate].choices[i].desc+"</span>")
           $("#choicebutton"+(i+1)).attr('class', gamestates[currentstate].choices[i].butcol+"button")
           $("#choicebutton"+(i+1)).css('color', gamestates[currentstate].choices[i].col)
           $("#choicebutton"+(i+1)).unbind()
@@ -664,9 +665,32 @@ function getCursorXY(e) {
   $("#tooltip").css("left", (((window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft))+15)+"px")
 }
 $(document).ready(function(){
+  handlewindowresize()
   loadpage("home")
 })
 
+//Detect Window Size and Resize, Put a Warning, and Zoom accordingly.
+resizewarning = false
+function handlewindowresize(){
+  var wid = document.documentElement.clientWidth
+  var hei = document.documentElement.clientHeight
+  console.warn("RESIZE DETECTED. Width: "+wid+", Height: "+hei)
+  if (hei < 600) {
+    document.getElementById("content").style.zoom = "50%"
+    resizewarning = true
+  } else if (hei < 720) {
+    document.getElementById("content").style.zoom = "67%"
+    resizewarning = true
+  } else if (hei < 800) {
+    document.getElementById("content").style.zoom = "80%"
+    resizewarning = true
+  } else {
+    document.getElementById("content").style.zoom = "100%"
+    resizewarning = false
+  }
+
+}
+window.addEventListener("resize", handlewindowresize)
 // EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
 // EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
 // EVERYTHING BELOW IS GAMESTATES AND GAMEPLAY/STORY. GO NO FURTHER IF YOU REALLY DON'T WANT SPOILERS.
@@ -675,25 +699,25 @@ msgnum = 0
 spp = 0
 currentstate = savegame.gamestate
 emotemap = {
-  neutral: [[0,0], [-150,0]],
-  happy: [[-300,0], [-450,0]],
-  sad: [[-600,0], [-750,0]],
-  skeptical: [[-900,0], [-1050,0]],
+  neutral: [[0,0], [-300,0]],
+  happy: [[-600,0], [-900,0]],
+  sad: [[-1200,0], [-1500,0]],
+  skeptical: [[-1800,0], [-2100,0]],
 
-  notimpressed: [[0,-150], [-150,-150]],
-  selfassured: [[-300,-150], [-450,-150]],
-  surprised: [[-600,-150], [-750,-150]],
-  wary: [[-900,-150], [-1050,-150]],
+  notimpressed: [[0,-300], [-300,-300]],
+  selfassured: [[-600,-300], [-900,-300]],
+  surprised: [[-1200,-300], [-1500,-300]],
+  wary: [[-1800,-300], [-2100,-300]],
 
-  worried: [[0,-300], [-150,-300]],
-  annoyed: [[-300,-300], [-450,-300]],
-  contemplative: [[-600,-300], [-750,-300]],
-  evil: [[-900,-300], [-1050,-300]],
+  worried: [[0,-600], [-300,-600]],
+  annoyed: [[-600,-600], [-900,-600]],
+  contemplative: [[-1200,-600], [-1500,-600]],
+  evil: [[-1800,-600], [-2100,-600]],
 
-  disgusted: [[0,-450], [-150,-450]],
-  crying: [[-300,-450], [-450,-450]],
-  angry: [[-600,-450], [-750,-450]],
-  drunk: [[-900,-450], [-1050,-450]]
+  disgusted: [[0,-900], [-300,-900]],
+  crying: [[-600,-900], [-900,-900]],
+  angry: [[-1200,-900], [-1500,-900]],
+  drunk: [[-1800,-900], [-2100,-900]]
 }
 function loadgamestate(state){
   if (gamestates[state] != undefined && gamestates[state] != null) {
