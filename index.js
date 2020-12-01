@@ -546,6 +546,10 @@ characters = {
   developer: {
     name: "Narrator",
     icon: "CharacterFaces/Narrator.png"
+  },
+  gorl: {
+    name: "A GIRL!?!",
+    icon: "CharacterFaces/Female1.png"
   }
 }
 
