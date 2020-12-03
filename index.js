@@ -530,9 +530,6 @@ createchapter("Ballistika", "Death", "Lorem Ipsum...", {inventory: [], gamestate
 endings = []
 function createending(book, chapter, canonical, name, badgood){endings.push({book: book, chapter: chapter, canonical: canonical, name: name, badgood: badgood})}
 createending("Ballistika", 1, true, "Normal Beginning", "good")
-createending("Ballistika", 1, false, "Abnormal Beginning", "bad")
-createending("Ballistika", 1, false, "Good Ending", "good")
-createending("Ballistika", 1, false, "Cover Yourself in Oil", "bad")
 
 items = []
 function createitem(name, icon, color, description){items.push({name: name, icon: icon, color: color, desc: description})}
